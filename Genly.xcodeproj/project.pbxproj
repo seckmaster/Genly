@@ -8,18 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */; };
-		EA8BEF232A0151FE005F1A74 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF222A0151FE005F1A74 /* ContentView.swift */; };
+		EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF222A0151FE005F1A74 /* MainView.swift */; };
 		EA8BEF252A0151FF005F1A74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8BEF242A0151FF005F1A74 /* Assets.xcassets */; };
 		EA8BEF282A0151FF005F1A74 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8BEF272A0151FF005F1A74 /* Preview Assets.xcassets */; };
+		EA8BEF332A015277005F1A74 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = EA8BEF322A015277005F1A74 /* RichTextKit */; };
+		EA8BEF392A015B52005F1A74 /* AppConfigStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */; };
+		EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF3A2A015DCF005F1A74 /* ApiKeyView.swift */; };
+		EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */; };
+		EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */; };
+		EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */; };
+		EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */; };
+		EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB82A0184A800D0B5BF /* Promise.swift */; };
+		EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EAC3BCBB2A0184B900D0B5BF /* Alamofire */; };
+		EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		EA8BEF1D2A0151FE005F1A74 /* Genly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Genly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenlyApp.swift; sourceTree = "<group>"; };
-		EA8BEF222A0151FE005F1A74 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EA8BEF222A0151FE005F1A74 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		EA8BEF242A0151FF005F1A74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA8BEF272A0151FF005F1A74 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		EA8BEF292A0151FF005F1A74 /* Genly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Genly.entitlements; sourceTree = "<group>"; };
+		EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigStorage.swift; sourceTree = "<group>"; };
+		EA8BEF3A2A015DCF005F1A74 /* ApiKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeyView.swift; sourceTree = "<group>"; };
+		EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideBarView.swift; sourceTree = "<group>"; };
+		EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
+		EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIAPI.swift; sourceTree = "<group>"; };
+		EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireNetworkClient.swift; sourceTree = "<group>"; };
+		EAC3BCB82A0184A800D0B5BF /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
+		EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextControlsPane.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +45,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA8BEF332A015277005F1A74 /* RichTextKit in Frameworks */,
+				EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +58,7 @@
 			children = (
 				EA8BEF1F2A0151FE005F1A74 /* Genly */,
 				EA8BEF1E2A0151FE005F1A74 /* Products */,
+				EA8BEF312A015277005F1A74 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,8 +73,11 @@
 		EA8BEF1F2A0151FE005F1A74 /* Genly */ = {
 			isa = PBXGroup;
 			children = (
-				EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */,
-				EA8BEF222A0151FE005F1A74 /* ContentView.swift */,
+				EA8BEF3C2A0165BD005F1A74 /* Views */,
+				EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */,
+				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
+				EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */,
+				EAC3BCB82A0184A800D0B5BF /* Promise.swift */,
 				EA8BEF242A0151FF005F1A74 /* Assets.xcassets */,
 				EA8BEF292A0151FF005F1A74 /* Genly.entitlements */,
 				EA8BEF262A0151FF005F1A74 /* Preview Content */,
@@ -67,6 +91,26 @@
 				EA8BEF272A0151FF005F1A74 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EA8BEF312A015277005F1A74 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EA8BEF3C2A0165BD005F1A74 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */,
+				EA8BEF222A0151FE005F1A74 /* MainView.swift */,
+				EA8BEF3A2A015DCF005F1A74 /* ApiKeyView.swift */,
+				EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */,
+				EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */,
+				EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +129,10 @@
 			dependencies = (
 			);
 			name = Genly;
+			packageProductDependencies = (
+				EA8BEF322A015277005F1A74 /* RichTextKit */,
+				EAC3BCBB2A0184B900D0B5BF /* Alamofire */,
+			);
 			productName = Genly;
 			productReference = EA8BEF1D2A0151FE005F1A74 /* Genly.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +161,10 @@
 				Base,
 			);
 			mainGroup = EA8BEF142A0151FE005F1A74;
+			packageReferences = (
+				EA8BEF2F2A015222005F1A74 /* XCRemoteSwiftPackageReference "RichTextKit" */,
+				EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			productRefGroup = EA8BEF1E2A0151FE005F1A74 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -139,8 +191,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA8BEF232A0151FE005F1A74 /* ContentView.swift in Sources */,
+				EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */,
+				EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */,
+				EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */,
+				EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */,
+				EA8BEF392A015B52005F1A74 /* AppConfigStorage.swift in Sources */,
+				EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */,
 				EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */,
+				EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */,
+				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
+				EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +396,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EA8BEF2F2A015222005F1A74 /* XCRemoteSwiftPackageReference "RichTextKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielsaidi/RichTextKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.2;
+			};
+		};
+		EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EA8BEF322A015277005F1A74 /* RichTextKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EA8BEF2F2A015222005F1A74 /* XCRemoteSwiftPackageReference "RichTextKit" */;
+			productName = RichTextKit;
+		};
+		EAC3BCBB2A0184B900D0B5BF /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EA8BEF152A0151FE005F1A74 /* Project object */;
 }

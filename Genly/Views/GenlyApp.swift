@@ -9,9 +9,9 @@ import SwiftUI
 
 @main
 struct GenlyApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      MainView(router: .init(), viewModel: .init())
     }
+  }
 }
