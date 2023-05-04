@@ -12,6 +12,7 @@ struct GenlyApp: App {
   var body: some Scene {
     WindowGroup {
       MainView(router: .init(), viewModel: .init())
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
   }
 }

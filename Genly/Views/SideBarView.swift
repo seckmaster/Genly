@@ -20,7 +20,7 @@ struct SideBarView: View {
             DropDownSelectionView(
               selectedOption: $viewModel.languageOption, 
               placeholder: "Select langauge", 
-              options: ["English", "Slovenian"]
+              options: ["English", "Slovene"]
             )
           }
           PairView(text: "Tone") { 
@@ -89,8 +89,10 @@ struct SideBarView: View {
             ))
           }
         }
+        .padding(20)
       }
-      .padding(40)
+      .cornerRadius(16)
+      .background(Color(red: 0.2, green: 0.2, blue: 0.2))
     }
   }
 }
@@ -134,6 +136,8 @@ extension SideBarView {
         Text(text)
           .foregroundColor(.primary)
           .font(.system(size: 14))
+          .frame(maxWidth: 100)
+          .lineLimit(2)
         actionView()
       }
     }
@@ -151,7 +155,7 @@ extension SideBarView {
           Text($0.description)
         }
       }
-      .pickerStyle(.menu) 
+      .pickerStyle(.menu)
     }
   }
 }

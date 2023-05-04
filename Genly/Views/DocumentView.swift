@@ -10,13 +10,18 @@ import SwiftUI
 import RichTextKit
 
 struct DocumentView: View {
+  enum DocumentSource {
+    case new(SideBarView.TemplateOptions)
+    case existing(Document)
+  }
+  
   private var delegate: TextViewDelegate!
-  let templateOptions: SideBarView.TemplateOptions
+  let source: DocumentSource
   @ObservedObject var viewModel: ViewModel
   
-  init(templateOptions: SideBarView.TemplateOptions, apiKey: String) {
-    self.templateOptions = templateOptions
-    self.viewModel = .init(api: .init(), apiKey: apiKey)
+  init(source: DocumentSource, apiKey: String) {
+    self.source = source
+    self.viewModel = .init(source: source, apiKey: apiKey)
     delegate = .init(view: .init(value: self))
   }
   
@@ -157,17 +162,18 @@ struct DocumentView: View {
       )
       TextView(text: $viewModel.text, delegate: delegate)
         .focusable()
-        .onAppear {
-          Task {
-            //          await viewModel.prepareDocument(templateOptions: templateOptions)
-          }
-        }
-    }.padding()
+    }
+    .padding()
+    .onAppear { @MainActor in
+      Task {
+        await viewModel.prepareDocument()
+      }
+    }
   }
 }
 
 class TextViewDelegate: NSObject, NSTextViewDelegate {
-  private let view: Box<DocumentView>
+  let view: Box<DocumentView>
   weak var textView: NSTextView?
   
   init(view: Box<DocumentView>) {
@@ -275,13 +281,18 @@ struct TextView: NSViewRepresentable {
     (textView.documentView as! NSTextView).textStorage?.setAttributedString(attributedString)
     (textView.documentView as! NSTextView).selectedRanges = ranges
     (textView.documentView as! NSTextView).delegate = delegate
+    delegate?.view.value.viewModel.updateDocument()
   }
 }
 
 extension DocumentView {
   class ViewModel: ObservableObject {
-    let api: OpenAIAPI
+    let source: DocumentView.DocumentSource
+    private(set) var document: Document
+    let api: OpenAIAPI = .init()
     let apiKey: String
+    let storage: DocumentStorage = try! .init()
+    
     private var gptHistory: [OpenAIAPI.Message] = []
     
     @Published var isBoldHighlighted: Bool = false
@@ -291,59 +302,74 @@ extension DocumentView {
     @Published var isHeading2: Bool = false
     @Published var isHeading3: Bool = false
     @Published var selectedRanges: [NSRange] = []
-    @Published var text: AttributedString = 
+    @Published var text: AttributedString
     
-    parseMarkdown("""
-        # Blog topic:
-        
-        ## The Ultimate Guide to Training Your Dog: Proven Techniques for a Well-Behaved and Happy Canine Companion
-        
-        ### Blog outline:
-        
-        ### Introduction: The Importance of Training Your Dog
-        
-        *keywords: dog training, importance of training, well-behaved dog, happy dog, responsible dog ownership*
-        
-        ### The Science Behind Dog Training: Understanding How Dogs Learn
-        
-        *keywords: dog learning, positive reinforcement, operant conditioning, classical conditioning, dog psychology*
-        
-        ### Essential Commands Every Dog Should Know
-        
-        *keywords: basic dog commands, sit, stay, come, leave it, heel, dog obedience*
-        
-        ### How to Choose the Right Training Method for Your Dog
-        
-        *keywords: dog training methods, positive reinforcement, clicker training, lure and reward, balanced training, choosing the right method*
-        
-        ### Addressing Common Behavior Problems
-        
-        *keywords: dog behavior problems, barking, jumping, chewing, digging, separation anxiety, aggression, solutions*
-        
-        ### Socialization: The Key to a Well-Adjusted Dog
-        
-        *keywords: dog socialization, puppy socialization, socializing adult dogs, dog parks, dog classes, socialization tips*
-        
-        ### Advanced Training: Taking Your Dog's Skills to the Next Level
-        
-        *keywords: advanced dog training, agility, obedience competitions, therapy dog training, service dog training, dog sports*
-        
-        ### Conclusion: The Lifelong Benefits of Training Your Dog
-        
-        *keywords: benefits of dog training, stronger bond, mental stimulation, safety, well-behaved dog, happy dog*
-        
-        [this is a link](http://www.google.com)
-        """)
+//    parseMarkdown("""
+//        # Blog topic:
+//        
+//        ## The Ultimate Guide to Training Your Dog: Proven Techniques for a Well-Behaved and Happy Canine Companion
+//        
+//        ### Blog outline:
+//        
+//        ### Introduction: The Importance of Training Your Dog
+//        
+//        *keywords: dog training, importance of training, well-behaved dog, happy dog, responsible dog ownership*
+//        
+//        ### The Science Behind Dog Training: Understanding How Dogs Learn
+//        
+//        *keywords: dog learning, positive reinforcement, operant conditioning, classical conditioning, dog psychology*
+//        
+//        ### Essential Commands Every Dog Should Know
+//        
+//        *keywords: basic dog commands, sit, stay, come, leave it, heel, dog obedience*
+//        
+//        ### How to Choose the Right Training Method for Your Dog
+//        
+//        *keywords: dog training methods, positive reinforcement, clicker training, lure and reward, balanced training, choosing the right method*
+//        
+//        ### Addressing Common Behavior Problems
+//        
+//        *keywords: dog behavior problems, barking, jumping, chewing, digging, separation anxiety, aggression, solutions*
+//        
+//        ### Socialization: The Key to a Well-Adjusted Dog
+//        
+//        *keywords: dog socialization, puppy socialization, socializing adult dogs, dog parks, dog classes, socialization tips*
+//        
+//        ### Advanced Training: Taking Your Dog's Skills to the Next Level
+//        
+//        *keywords: advanced dog training, agility, obedience competitions, therapy dog training, service dog training, dog sports*
+//        
+//        ### Conclusion: The Lifelong Benefits of Training Your Dog
+//        
+//        *keywords: benefits of dog training, stronger bond, mental stimulation, safety, well-behaved dog, happy dog*
+//        
+//        [this is a link](http://www.google.com)
+//        """)
     
-    init(api: OpenAIAPI, apiKey: String) {
-      self.api = api
+    init(source: DocumentView.DocumentSource, apiKey: String) {
+      self.source = source
       self.apiKey = apiKey
+      switch source {
+      case .existing(let document):
+        self.text = document.text
+        self.document = document
+      case .new(let template):
+        self.text = .init()
+        self.document = .init(
+          id: .init(), 
+          title: "", 
+          text: .init(), 
+          createdAt: Date(), 
+          lastModifiedAt: Date()
+        )
+      }
     }
     
     @MainActor
     func prepareDocument(
-      templateOptions: SideBarView.TemplateOptions
     ) async {
+      guard case let .new(templateOptions) = source else { return }
+      
       let prompt = templateOptions.useCaseOption.prepareAssistant(options: templateOptions)
       gptHistory.append(.init(
         role: "system", 
@@ -372,6 +398,7 @@ extension DocumentView {
         print(responses[0])
         
         self.text = parseMarkdown(responses[0])
+        self.updateDocument()
         
         self.gptHistory.append(.init(
           role: "assistant", 
@@ -381,58 +408,21 @@ extension DocumentView {
         print("Calling OpenAI failed")
       }
     }
-  }
-}
-
-fileprivate extension SideBarView.UseCaseOption {
-  func prepareAssistant(options: SideBarView.TemplateOptions) -> String {
-    switch self {
-    case .blogIdeaAndOutline:
-      return """
-You are a helpful assistant, helping the user with creating an outline for a blog post. 
-Based on the provided keyword, your goal is to generate ideas for a blog post and prepare an outline.
-The result must contain a title of the blogpost and a list of sections. 
-Each item in the section contains a subtitle and a list of keywords.
-Your response should be in markdown format.
-The style of the response should match the tone provided by the user.
-The language of the response should match the language provided by the user.
-
-Here is an example:
-###
-The language of your response is: English
-The tone of your response should be: Convincing
-The input keyword is: AI writing assistant
-response:
-# Blog topic:
-
-## The Potential of AI Writing Assistants: How They are Transforming the Way We Write and Create Content
-
-### Blog outline:
-
-### Introduction: What is an AI Writing Assistant and How Does it Work?
-
-*keywords: ai writing assistant, content generation software, ai copywriting tool, ai writer, content generator)*
-
-## Exploring the Unique Benefits of Using an AI Writing Assistant
-
-**keywords: ai writing tool advantages, automated writing tools benefits, what can an ai writer do?, automated writing software advantages)**
-
-## The Different Types of AI Writing Assistants & Where to Find Them
-
-*keywords: digital writing assistant, writing assistant software free, best writing assistant software, writing assistant website)*
-
-##An In-Depth Look at the Different Use Cases for AI Writers
-
-*keywords: ai writer use cases, can ai write blog posts?, auto write emails, story generator online)*
-
-How to Choose the Best AI
-###   
-"""
-    case _:
-      fatalError()
+    
+    func updateDocument(
+    ) {
+      guard document.text != text else { return }
+      print("saving document with id ", document.id)
+      document.text = text
+      document.lastModifiedAt = Date()
+      do {
+        try storage.store(document: document)
+      } catch {
+        print(error)
+      }
     }
   }
-} 
+}
 
 func parseMarkdown(
   _ markdown: String,
@@ -540,3 +530,63 @@ extension NSFont {
     fontDescriptor.symbolicTraits
   }
 }
+
+fileprivate extension SideBarView.UseCaseOption {
+  func prepareAssistant(options: SideBarView.TemplateOptions) -> String {
+    switch self {
+    case .blogIdeaAndOutline:
+      let attempt1 = """
+You are a helpful assistant, helping the user with creating an outline for a blog post. 
+Based on the provided keyword, your goal is to generate ideas for a blog post and prepare an outline.
+The result must contain a title of the blogpost and a list of sections. 
+Each item in the section contains a subtitle and a list of keywords.
+Your response should be in markdown format.
+The style of the response should match the tone provided by the user.
+The language of the response should match the language provided by the user.
+
+Here is an example:
+###
+The language of your response is: English
+The tone of your response should be: Convincing
+The input keyword is: AI writing assistant
+response:
+# Blog topic:
+
+## The Potential of AI Writing Assistants: How They are Transforming the Way We Write and Create Content
+
+### Blog outline:
+
+### Introduction: What is an AI Writing Assistant and How Does it Work?
+
+*keywords: ai writing assistant, content generation software, ai copywriting tool, ai writer, content generator)*
+
+## Exploring the Unique Benefits of Using an AI Writing Assistant
+
+**keywords: ai writing tool advantages, automated writing tools benefits, what can an ai writer do?, automated writing software advantages)**
+
+## The Different Types of AI Writing Assistants & Where to Find Them
+
+*keywords: digital writing assistant, writing assistant software free, best writing assistant software, writing assistant website)*
+
+##An In-Depth Look at the Different Use Cases for AI Writers
+
+*keywords: ai writer use cases, can ai write blog posts?, auto write emails, story generator online)*
+
+How to Choose the Best AI
+###   
+"""
+      let attempt2 = """
+You are a helpful assistant, helping the user with writing a blog post.
+
+Create an outline for a blog idea with the primary keyword "\(options.keyword)". 
+Make the tone of the outline \(options.toneOption). 
+Output language should be \(options.languageOption).
+Output text should be in Markdown format.
+For each outline subheading, give a short paragraph and append a list of relevant keywords in italic.
+"""
+      return attempt2
+    case _:
+      fatalError()
+    }
+  }
+} 

@@ -21,6 +21,7 @@
 		EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB82A0184A800D0B5BF /* Promise.swift */; };
 		EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EAC3BCBB2A0184B900D0B5BF /* Alamofire */; };
 		EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */; };
+		EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireNetworkClient.swift; sourceTree = "<group>"; };
 		EAC3BCB82A0184A800D0B5BF /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextControlsPane.swift; sourceTree = "<group>"; };
+		EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,14 +75,10 @@
 		EA8BEF1F2A0151FE005F1A74 /* Genly */ = {
 			isa = PBXGroup;
 			children = (
-				EA8BEF3C2A0165BD005F1A74 /* Views */,
-				EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */,
-				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
-				EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */,
-				EAC3BCB82A0184A800D0B5BF /* Promise.swift */,
-				EA8BEF242A0151FF005F1A74 /* Assets.xcassets */,
 				EA8BEF292A0151FF005F1A74 /* Genly.entitlements */,
-				EA8BEF262A0151FF005F1A74 /* Preview Content */,
+				EAC3BCC02A02D07C00D0B5BF /* Common */,
+				EAC3BCBF2A02CFE800D0B5BF /* Resources */,
+				EA8BEF3C2A0165BD005F1A74 /* Views */,
 			);
 			path = Genly;
 			sourceTree = "<group>";
@@ -111,6 +109,27 @@
 				EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		EAC3BCBF2A02CFE800D0B5BF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EA8BEF242A0151FF005F1A74 /* Assets.xcassets */,
+				EA8BEF262A0151FF005F1A74 /* Preview Content */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		EAC3BCC02A02D07C00D0B5BF /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */,
+				EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */,
+				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
+				EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */,
+				EAC3BCB82A0184A800D0B5BF /* Promise.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +216,7 @@
 				EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */,
 				EA8BEF392A015B52005F1A74 /* AppConfigStorage.swift in Sources */,
 				EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */,
+				EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */,
 				EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */,
 				EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */,
 				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
@@ -326,10 +346,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Genly/Genly.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Genly/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Genly/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = R8R49GQMU4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -353,10 +374,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Genly/Genly.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Genly/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Genly/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = R8R49GQMU4;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

@@ -29,6 +29,10 @@ open class AlamofireNetworkClient {
     eventMonitors: [RequestMonitor] = [],
     defaultErrorHandler errorHandler: ErrorHandler? = nil
   ) {
+    let config = URLSessionConfiguration.default
+    config.timeoutIntervalForRequest = 1000
+    config.timeoutIntervalForResource = 1000
+    let session = Alamofire.Session(configuration: config, delegate: .init())
     self.session = session
     self.eventMonitors = eventMonitors
     self.defaultErrorHandler = errorHandler

@@ -15,16 +15,40 @@ struct MainView: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      SideBarView {
-        options = $0
-        router.path.append($0)
+      HStack {
+        SideBarView {
+          options = $0
+          router.path.append($0)
+        }
+        .padding(40)
+        List {
+          ForEach(viewModel.documents, id: \.self) { id in 
+            Button(id.uuidString) {
+              do {
+                let document = try viewModel.documentsStorage.loadDocument(for: id)
+                router.path.append(document)
+              } catch {
+                print(error)
+              }
+            }
+          }
+        }
       }
       .navigationDestination(for: SideBarView.TemplateOptions.self) {
-        DocumentView(templateOptions: $0, apiKey: try! AppConfigStorage().config.apiKey)
+        DocumentView(source: .new($0), apiKey: try! AppConfigStorage().config.apiKey)
       }
+      .navigationDestination(for: Document.self) {
+        DocumentView(
+          source: .existing($0), 
+          apiKey: try! AppConfigStorage().config.apiKey
+        )
+      }
+//      .navigationTitle("Genly")
     }
+    .navigationTitle("Genly")
     .onAppear {
       viewModel.loadConfig()
+      try! viewModel.loadDocuments()
     }
     .enterApiKey(
       isVisible: $viewModel.mustEnterApiKey, 
@@ -35,6 +59,9 @@ struct MainView: View {
         } catch {}
       }
     )
+    .onChange(of: router.path) { newValue in
+      try! viewModel.loadDocuments()
+    }
   }
 }
 
@@ -50,10 +77,13 @@ extension MainView {
   }
   
   class ViewModel: ObservableObject {
-    private let storage: AppConfigStorage
+    let storage: AppConfigStorage
+    let documentsStorage: DocumentStorage = try! .init()
+    
+    private(set) var apiKey: String?
     
     @Published var mustEnterApiKey: Bool = false
-    private(set) var apiKey: String?
+    @Published var documents: [Document.ID] = []
     
     init(storage: AppConfigStorage = .init()) {
       self.storage = storage
@@ -72,6 +102,10 @@ extension MainView {
     
     func saveConfig(_ config: AppConfigStorage.AppConfig) throws {
       try storage.store(config: config)
+    }
+    
+    func loadDocuments() throws {
+      documents = try documentsStorage.documents()
     }
   }
 }
