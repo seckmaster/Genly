@@ -10,7 +10,7 @@ import Foundation
 class OpenAIAPI {
   let client = AlamofireNetworkClient()
   
-  struct Message: Encodable, Decodable {
+  struct Message: Encodable, Decodable, Equatable, Hashable {
     let role: String
     let content: String
   }

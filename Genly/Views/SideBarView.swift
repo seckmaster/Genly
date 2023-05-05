@@ -98,7 +98,7 @@ struct SideBarView: View {
 }
 
 extension SideBarView {
-  enum UseCaseOption: String, Hashable, Equatable, CaseIterable, CustomStringConvertible {
+  enum UseCaseOption: String, Hashable, Equatable, CaseIterable, CustomStringConvertible, Codable {
     case blogIdeaAndOutline = "Blog idea and outline"
     case blogSection = "Blog section writing"
     case businessPitch = "Business pitch"
@@ -113,10 +113,10 @@ extension SideBarView {
     @Published var creativityOption: String = "Optimal"
     @Published var useCaseOption: UseCaseOption = .blogIdeaAndOutline
     @Published var variantsCount: Int = 1
-    @Published var keyword: String = "Training a dog"
+    @Published var keyword: String = ""
   }
   
-  struct TemplateOptions: Hashable {
+  struct TemplateOptions: Hashable, Codable {
     var languageOption: String
     var toneOption: String
     var creativityOption: String

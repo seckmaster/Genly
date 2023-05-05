@@ -26,147 +26,194 @@ struct DocumentView: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading) {
-      TextControlsPane(
-        isBoldHighlighted: $viewModel.isBoldHighlighted, 
-        isItalicHighlighted: $viewModel.isItalicHighlighted, 
-        isUnderlineHighlighted: $viewModel.isUnderlineHighlighted,
-        isHeading1: $viewModel.isHeading1,
-        isHeading2: $viewModel.isHeading2,
-        isHeading3: $viewModel.isHeading3,
-        boldAction: {
-          guard let nsRange = viewModel.selectedRanges.first else { return }
-          let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
-          var string = AttributedString(viewModel.text[range])
-          let nsfont = NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font]! as! NSFont
-          var container = AttributeContainer()
-          container.foregroundColor = string.foregroundColor
-          container.font = .systemFont(ofSize: nsfont.pointSize).withTraits([
-            nsfont.isItalic ? .italic : nil, 
-            nsfont.isBold ? nil : .bold,
-          ])
-          string.setAttributes(container)
-          viewModel.text.replaceSubrange(
-            range,
-            with: string
-          )
-        },
-        italicAction: {
-          guard let nsRange = viewModel.selectedRanges.first else { return }
-          let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
-          var string = AttributedString(viewModel.text[range])
-          let nsfont = NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font]! as! NSFont
-          var container = AttributeContainer()
-          container.foregroundColor = string.foregroundColor
-          container.font = .systemFont(ofSize: nsfont.pointSize).withTraits([
-            nsfont.isItalic ? nil : .italic, 
-            nsfont.isBold ? .bold : nil,
-          ])
-          string.setAttributes(container)
-          viewModel.text.replaceSubrange(
-            range,
-            with: string
-          )
-        },
-        underlineAction: {
-          
-        },
-        heading1Action: {
-          guard var nsRange = viewModel.selectedRanges.first else { return }
-          while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location -= 1
-            nsRange.length += 1
+    GeometryReader { metrics in
+      ZStack {
+        HStack {
+          VStack(alignment: .leading) {
+            HStack(spacing: 40) {
+              TextControlsPane(
+                isBoldHighlighted: $viewModel.isBoldHighlighted, 
+                isItalicHighlighted: $viewModel.isItalicHighlighted, 
+                isUnderlineHighlighted: $viewModel.isUnderlineHighlighted,
+                isHeading1: $viewModel.isHeading1,
+                isHeading2: $viewModel.isHeading2,
+                isHeading3: $viewModel.isHeading3,
+                boldAction: {
+                  guard let nsRange = viewModel.selectedRanges.first else { return }
+                  let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
+                  var string = AttributedString(viewModel.text[range])
+                  let nsfont = (NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font] as? NSFont) ?? .systemFont(ofSize: 14)
+                  var container = AttributeContainer()
+                  container.foregroundColor = string.foregroundColor
+                  container.font = .systemFont(ofSize: nsfont.pointSize).withTraits([
+                    nsfont.isItalic ? .italic : nil, 
+                    nsfont.isBold ? nil : .bold,
+                  ])
+                  string.setAttributes(container)
+                  viewModel.text.replaceSubrange(
+                    range,
+                    with: string
+                  )
+                },
+                italicAction: {
+                  guard let nsRange = viewModel.selectedRanges.first else { return }
+                  let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
+                  var string = AttributedString(viewModel.text[range])
+                  let nsfont = (NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font] as? NSFont) ?? .systemFont(ofSize: 14)
+                  var container = AttributeContainer()
+                  container.foregroundColor = string.foregroundColor
+                  container.font = .systemFont(ofSize: nsfont.pointSize).withTraits([
+                    nsfont.isItalic ? nil : .italic, 
+                    nsfont.isBold ? .bold : nil,
+                  ])
+                  string.setAttributes(container)
+                  viewModel.text.replaceSubrange(
+                    range,
+                    with: string
+                  )
+                },
+                underlineAction: {
+                  
+                },
+                heading1Action: {
+                  guard var nsRange = viewModel.selectedRanges.first else { return }
+                  while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location -= 1
+                    nsRange.length += 1
+                  }
+                  if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location += 1
+                    nsRange.length -= 1
+                  }
+                  while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
+                    nsRange.length += 1
+                  }
+                  let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
+                  var string = AttributedString(viewModel.text[range])
+                  let nsfont = (NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font] as? NSFont) ?? .systemFont(ofSize: 14)
+                  var container = AttributeContainer()
+                  container.foregroundColor = string.foregroundColor
+                  if nsfont.isHeading1 {
+                    container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
+                  } else {
+                    container.font = NSFont.heading1.withTraits(nsfont.traits)
+                  }
+                  string.setAttributes(container)
+                  viewModel.text.replaceSubrange(
+                    range,
+                    with: string
+                  )
+                },
+                heading2Action: {
+                  guard var nsRange = viewModel.selectedRanges.first else { return }
+                  while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location -= 1
+                    nsRange.length += 1
+                  }
+                  if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location += 1
+                    nsRange.length -= 1
+                  }
+                  while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
+                    nsRange.length += 1
+                  }
+                  let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
+                  var string = AttributedString(viewModel.text[range])
+                  let nsfont = (NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font] as? NSFont) ?? .systemFont(ofSize: 14)
+                  var container = AttributeContainer()
+                  container.foregroundColor = string.foregroundColor
+                  if nsfont.isHeading2 {
+                    container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
+                  } else {
+                    container.font = NSFont.heading2.withTraits(nsfont.traits)
+                  }
+                  string.setAttributes(container)
+                  viewModel.text.replaceSubrange(
+                    range,
+                    with: string
+                  )
+                },
+                heading3Action: {
+                  guard var nsRange = viewModel.selectedRanges.first else { return }
+                  while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location -= 1
+                    nsRange.length += 1
+                  }
+                  if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
+                    nsRange.location += 1
+                    nsRange.length -= 1
+                  }
+                  while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
+                    nsRange.length += 1
+                  }
+                  
+                  let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
+                  var string = AttributedString(viewModel.text[range])
+                  let nsfont = (NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font] as? NSFont) ?? .systemFont(ofSize: 14)
+                  var container = AttributeContainer()
+                  container.foregroundColor = string.foregroundColor
+                  if nsfont.isHeading3 {
+                    container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
+                  } else {
+                    container.font = NSFont.heading3.withTraits(nsfont.traits)
+                  }
+                  string.setAttributes(container)
+                  viewModel.text.replaceSubrange(
+                    range,
+                    with: string
+                  )
+                }
+              )
+              if viewModel.isSpinning {
+                ProgressView()
+                  .frame(width: 40, height: 40)
+              }
+            }
+            CommandsView(
+              paragraphAction: {
+                guard let range = viewModel.selectedRanges.first else { return }
+                Task {
+                  await viewModel.paragraph(selectionRange: range)
+                }
+              }, 
+              shortenAction: {
+                
+              }, 
+              expandAction: {
+                guard let range = viewModel.selectedRanges.first else { return }
+                Task {
+                  await viewModel.expand(selectionRange: range)
+                }
+              }, 
+              rephraseAction: {
+                guard let range = viewModel.selectedRanges.first else { return }
+                Task {
+                  await viewModel.rephrase(selectionRange: range)
+                }
+              }, 
+              improveAction: {
+                
+              }
+            )
+            .allowsHitTesting(!viewModel.selectedRanges.isEmpty && viewModel.selectedRanges[0].length > 0)
+            .background((!viewModel.selectedRanges.isEmpty && viewModel.selectedRanges[0].length > 0) ? .clear : .blue)
+            TextView(text: $viewModel.text, delegate: delegate)
+              .focusable()
           }
-          if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location += 1
-            nsRange.length -= 1
+          ScrollView(.vertical) {
+            ScrollViewReader { reader in
+              Text(viewModel.chat)
+            }
           }
-          while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
-            nsRange.length += 1
-          }
-          let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
-          var string = AttributedString(viewModel.text[range])
-          let nsfont = NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font]! as! NSFont
-          var container = AttributeContainer()
-          container.foregroundColor = string.foregroundColor
-          if nsfont.isHeading1 {
-            container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
-          } else {
-            container.font = NSFont.heading1.withTraits(nsfont.traits)
-          }
-          string.setAttributes(container)
-          viewModel.text.replaceSubrange(
-            range,
-            with: string
-          )
-        },
-        heading2Action: {
-          guard var nsRange = viewModel.selectedRanges.first else { return }
-          while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location -= 1
-            nsRange.length += 1
-          }
-          if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location += 1
-            nsRange.length -= 1
-          }
-          while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
-            nsRange.length += 1
-          }
-          let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
-          var string = AttributedString(viewModel.text[range])
-          let nsfont = NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font]! as! NSFont
-          var container = AttributeContainer()
-          container.foregroundColor = string.foregroundColor
-          if nsfont.isHeading2 {
-            container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
-          } else {
-            container.font = NSFont.heading2.withTraits(nsfont.traits)
-          }
-          string.setAttributes(container)
-          viewModel.text.replaceSubrange(
-            range,
-            with: string
-          )
-        },
-        heading3Action: {
-          guard var nsRange = viewModel.selectedRanges.first else { return }
-          while nsRange.location > 0 && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location -= 1
-            nsRange.length += 1
-          }
-          if viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.location)].isNewline {
-            nsRange.location += 1
-            nsRange.length -= 1
-          }
-          while nsRange.upperBound < viewModel.text.characters.count && !viewModel.text.characters[viewModel.text.characters.index(viewModel.text.characters.startIndex, offsetBy: nsRange.upperBound)].isNewline {
-            nsRange.length += 1
-          }
-          
-          let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
-          var string = AttributedString(viewModel.text[range])
-          let nsfont = NSAttributedString(string).fontAttributes(in: .init(location: 0, length: nsRange.length))[.font]! as! NSFont
-          var container = AttributeContainer()
-          container.foregroundColor = string.foregroundColor
-          if nsfont.isHeading3 {
-            container.font = NSFont.systemFont(ofSize: 14).withTraits(nsfont.traits)
-          } else {
-            container.font = NSFont.heading3.withTraits(nsfont.traits)
-          }
-          string.setAttributes(container)
-          viewModel.text.replaceSubrange(
-            range,
-            with: string
-          )
         }
-      )
-      TextView(text: $viewModel.text, delegate: delegate)
-        .focusable()
+      }
     }
     .padding()
     .onAppear { @MainActor in
-      Task {
-        await viewModel.prepareDocument()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        Task {
+          await self.viewModel.prepareDocument()
+        }
       }
     }
   }
@@ -182,7 +229,7 @@ class TextViewDelegate: NSObject, NSTextViewDelegate {
   
   func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRanges oldSelectedCharRanges: [NSValue], toCharacterRanges newSelectedCharRanges: [NSValue]) -> [NSValue] {
     guard let range = newSelectedCharRanges.first as? NSRange else { return newSelectedCharRanges }
-    guard textView.string.utf16.count > range.upperBound else { return newSelectedCharRanges }
+    guard textView.string.utf16.count >= range.upperBound else { return newSelectedCharRanges }
     let attrSubstr = textView.attributedString().fontAttributes(in: range)
     let isBold     = (attrSubstr[.font] as? NSFont)?.isBold ?? false
     let isItalic   = (attrSubstr[.font] as? NSFont)?.isItalic ?? false
@@ -302,6 +349,8 @@ extension DocumentView {
     @Published var isHeading2: Bool = false
     @Published var isHeading3: Bool = false
     @Published var selectedRanges: [NSRange] = []
+    @Published var isSpinning: Bool = false
+    @Published var chat: AttributedString
     @Published var text: AttributedString
     
 //    parseMarkdown("""
@@ -353,15 +402,20 @@ extension DocumentView {
       case .existing(let document):
         self.text = document.text
         self.document = document
+        self.chat = Self.chatToAttributedString(document.chatHistory)
+        self.gptHistory = document.chatHistory
       case .new(let template):
         self.text = .init()
         self.document = .init(
           id: .init(), 
           title: "", 
           text: .init(), 
+          chatHistory: [],
           createdAt: Date(), 
-          lastModifiedAt: Date()
+          lastModifiedAt: Date(),
+          templateOptions: template
         )
+        self.chat = .init()
       }
     }
     
@@ -370,49 +424,64 @@ extension DocumentView {
     ) async {
       guard case let .new(templateOptions) = source else { return }
       
-      let prompt = templateOptions.useCaseOption.prepareAssistant(options: templateOptions)
       gptHistory.append(.init(
         role: "system", 
-        content: prompt
+        content: """
+        You are an expert in writing blog posts.
+        
+        Write a blog post outline given relevant keywords inside <keywords></keywords> badge. 
+        The tone of the blog post must be \(document.templateOptions.toneOption). 
+        Output language of the blog post must be \(document.templateOptions.languageOption).
+        The output text must be in Markdown format.
+        """
       ))
       gptHistory.append(.init(
         role: "user", 
         content: """
-      The language of your response is: \(templateOptions.languageOption)
-      The tone of your response should be: \(templateOptions.toneOption)
-      The input keyword is: \(templateOptions.keyword)
+      <keywords>
+      \(templateOptions.keyword)
+      </keywords>
       """
       ))
+      chat = Self.chatToAttributedString(gptHistory)
+      document.chatHistory = gptHistory
+      updateDocument(force: true)
       
       do {
+        isSpinning = true
         let responses = try await api.completion(
-          temperature: 0.3, 
+          temperature: 0.3,
           variants: templateOptions.variantsCount, 
           messages: gptHistory, 
           apiKey: apiKey
         )
+        isSpinning = false
         guard !responses.isEmpty else { 
           return
         }
-        print("OpenAI did respond:")
-        print(responses[0])
-        
-        self.text = parseMarkdown(responses[0])
-        self.updateDocument()
         
         self.gptHistory.append(.init(
           role: "assistant", 
           content: responses[0]
         ))
+        
+        print("OpenAI did respond:")
+        print(responses[0])
+        
+        self.text = parseMarkdown(responses[0])
+        self.document.chatHistory = gptHistory
+        self.updateDocument()
       } catch {
         print("Calling OpenAI failed")
+        isSpinning = false
       }
     }
     
     func updateDocument(
+      force: Bool = false
     ) {
-      guard document.text != text else { return }
-      print("saving document with id ", document.id)
+      guard force || document.text != text else { return }
+      print("Saving document with id:", document.id)
       document.text = text
       document.lastModifiedAt = Date()
       do {
@@ -421,6 +490,199 @@ extension DocumentView {
         print(error)
       }
     }
+    
+    @MainActor
+    func paragraph(selectionRange range: NSRange) async {
+      let range = Range<AttributedString.Index>(range, in: text)!
+      let subtring = text[range]
+      let string = NSAttributedString(AttributedString(subtring)).string
+      await performCommand(
+        range: range, 
+        configureAIPrompt: """
+        You are an expert in writing blog posts.
+        
+        Write a paragraph for a blog post given some text inside <input></input> badge. 
+        Make the tone of the paragraph \(document.templateOptions.toneOption). 
+        Output language of the paragraph must be \(document.templateOptions.languageOption).
+        The paragraph must be in Markdown format.
+        """,
+        prompt: """
+      <input>
+      \(string)
+      </input>
+      """)
+    }
+    
+    @MainActor
+    func expand(selectionRange range: NSRange) async {
+      let range = Range<AttributedString.Index>(range, in: text)!
+      let subtring = text[range]
+      let string = NSAttributedString(AttributedString(subtring)).string
+      await performCommand(
+        range: range, 
+        configureAIPrompt: """
+        You are an expert in writing blog posts.
+        
+        Expand the paragraph given inside <paragraph></paragraph> badge. 
+        Make the tone of the paragraph \(document.templateOptions.toneOption). 
+        Output language of the paragraph must be \(document.templateOptions.languageOption).
+        The paragraph must be in Markdown format.
+        """,
+        prompt: """
+      <paragraph>
+      \(string)
+      </paragraph>
+      """)
+    }
+    
+    @MainActor
+    func rephrase(selectionRange range: NSRange) async {
+      let range = Range<AttributedString.Index>(range, in: text)!
+      let subtring = text[range]
+      let string = NSAttributedString(AttributedString(subtring)).string
+      await performCommand(
+        range: range, 
+        configureAIPrompt: """
+        You are an expert in writing blog posts.
+        
+        Rephrase the paragraph given inside <paragraph></paragraph> badge. 
+        Make the tone of the paragraph \(document.templateOptions.toneOption). 
+        Output language of the paragraph must be \(document.templateOptions.languageOption).
+        The paragraph must be in Markdown format.
+        Use context from previous chats to generate the most suitable response.
+        """,
+        prompt: """
+      <paragraph>
+      \(string)
+      </paragraph>
+      """
+      )
+    }
+    
+    @MainActor
+    private func performCommand(
+      range: Range<AttributedString.Index>,
+      configureAIPrompt: String,
+      prompt: String,
+      createNewHistory: Bool = true,
+      primaryForegroundColor: Color? = .init(nsColor: .magenta)
+    ) async {
+      if createNewHistory {
+        gptHistory.append(.init(
+          role: "system", 
+          content: configureAIPrompt
+        ))
+      }
+      gptHistory.append(.init(
+        role: "user", 
+        content: prompt
+      ))
+      let history: [OpenAIAPI.Message]
+      if createNewHistory {
+        history = gptHistory.suffix(2)
+      } else {
+        history = gptHistory
+      }
+      chat = Self.chatToAttributedString(gptHistory)
+      document.chatHistory = gptHistory
+      updateDocument(force: true)
+      do {
+        isSpinning = true
+        let responses = try await api.completion(
+          temperature: 0.3,
+          variants: 1, 
+          messages: history, 
+          apiKey: apiKey
+        )
+        isSpinning = false
+        guard !responses.isEmpty else { 
+          return
+        }
+        
+        self.gptHistory.append(.init(
+          role: "assistant", 
+          content: responses[0]
+        ))
+        self.chat = Self.chatToAttributedString(self.gptHistory)
+        
+        print("OpenAI did respond:")
+        print(responses[0])
+        
+        var attributedResponse = parseMarkdown(
+          responses[0], 
+          primaryForegroundColor: primaryForegroundColor
+        )
+        attributedResponse.insert(AttributedString("\n\n"), at: attributedResponse.startIndex)
+//        var container = AttributeContainer()
+//        container.foregroundColor = .magenta
+//        attributedResponse.setAttributes(container)
+        
+        self.text.insert(
+          attributedResponse, 
+          at: range.upperBound
+        )
+        self.document.chatHistory = gptHistory
+        self.updateDocument()
+      } catch {
+        print("Calling OpenAI failed")
+        isSpinning = false
+      }
+    }
+    
+    private static func chatToAttributedString(
+      _ chat: [OpenAIAPI.Message]
+    ) -> AttributedString {
+      var string = AttributedString()
+      for message in chat {
+        switch message.role {
+        case "system":
+          var container = AttributeContainer()
+          container.foregroundColor = .red
+          container.font = .boldSystemFont(ofSize: 14)
+          var substr = AttributedString("⦿  System\n")
+          substr.setAttributes(container)
+          string.append(substr)
+          
+          container = AttributeContainer()
+          container.foregroundColor = .white
+          container.font = .systemFont(ofSize: 14)
+          substr = AttributedString(message.content + "\n" + "\n")
+          substr.setAttributes(container)
+          string.append(substr)
+        case "assistant":
+          var container = AttributeContainer()
+          container.foregroundColor = .orange
+          container.font = .boldSystemFont(ofSize: 14)
+          var substr = AttributedString("⦿  Assistant\n")
+          substr.setAttributes(container)
+          string.append(substr)
+          
+          container = AttributeContainer()
+          container.foregroundColor = .white
+          container.font = .systemFont(ofSize: 14)
+          substr = AttributedString(message.content + "\n" + "\n")
+          substr.setAttributes(container)
+          string.append(substr)
+        case "user":
+          var container = AttributeContainer()
+          container.foregroundColor = .magenta
+          container.font = .boldSystemFont(ofSize: 14)
+          var substr = AttributedString("⦿  User\n")
+          substr.setAttributes(container)
+          string.append(substr)
+          
+          container = AttributeContainer()
+          container.foregroundColor = .white
+          container.font = .systemFont(ofSize: 14)
+          substr = AttributedString(message.content + "\n" + "\n")
+          substr.setAttributes(container)
+          string.append(substr)
+        case _:
+          fatalError()
+        }
+      }
+      return string
+    }
   }
 }
 
@@ -428,7 +690,8 @@ func parseMarkdown(
   _ markdown: String,
   allowsExtendedAttributes: Bool = false,
   interpretedSyntax: AttributedString.MarkdownParsingOptions.InterpretedSyntax = .inlineOnlyPreservingWhitespace,
-  failurePolicy: AttributedString.MarkdownParsingOptions.FailurePolicy = .returnPartiallyParsedIfPossible
+  failurePolicy: AttributedString.MarkdownParsingOptions.FailurePolicy = .returnPartiallyParsedIfPossible,
+  primaryForegroundColor: Color? = nil
 ) -> AttributedString {
   do {
     var attributedString = try AttributedString(
@@ -442,6 +705,9 @@ func parseMarkdown(
     
     var globalContainer = AttributeContainer()
     globalContainer.font = .systemFont(ofSize: 14)
+    if let color = primaryForegroundColor {
+      globalContainer.foregroundColor = color
+    }
     attributedString.mergeAttributes(globalContainer, mergePolicy: .keepNew)
     
     markdown.ranges(of: /###(.+?)\n/).forEach {
@@ -530,63 +796,3 @@ extension NSFont {
     fontDescriptor.symbolicTraits
   }
 }
-
-fileprivate extension SideBarView.UseCaseOption {
-  func prepareAssistant(options: SideBarView.TemplateOptions) -> String {
-    switch self {
-    case .blogIdeaAndOutline:
-      let attempt1 = """
-You are a helpful assistant, helping the user with creating an outline for a blog post. 
-Based on the provided keyword, your goal is to generate ideas for a blog post and prepare an outline.
-The result must contain a title of the blogpost and a list of sections. 
-Each item in the section contains a subtitle and a list of keywords.
-Your response should be in markdown format.
-The style of the response should match the tone provided by the user.
-The language of the response should match the language provided by the user.
-
-Here is an example:
-###
-The language of your response is: English
-The tone of your response should be: Convincing
-The input keyword is: AI writing assistant
-response:
-# Blog topic:
-
-## The Potential of AI Writing Assistants: How They are Transforming the Way We Write and Create Content
-
-### Blog outline:
-
-### Introduction: What is an AI Writing Assistant and How Does it Work?
-
-*keywords: ai writing assistant, content generation software, ai copywriting tool, ai writer, content generator)*
-
-## Exploring the Unique Benefits of Using an AI Writing Assistant
-
-**keywords: ai writing tool advantages, automated writing tools benefits, what can an ai writer do?, automated writing software advantages)**
-
-## The Different Types of AI Writing Assistants & Where to Find Them
-
-*keywords: digital writing assistant, writing assistant software free, best writing assistant software, writing assistant website)*
-
-##An In-Depth Look at the Different Use Cases for AI Writers
-
-*keywords: ai writer use cases, can ai write blog posts?, auto write emails, story generator online)*
-
-How to Choose the Best AI
-###   
-"""
-      let attempt2 = """
-You are a helpful assistant, helping the user with writing a blog post.
-
-Create an outline for a blog idea with the primary keyword "\(options.keyword)". 
-Make the tone of the outline \(options.toneOption). 
-Output language should be \(options.languageOption).
-Output text should be in Markdown format.
-For each outline subheading, give a short paragraph and append a list of relevant keywords in italic.
-"""
-      return attempt2
-    case _:
-      fatalError()
-    }
-  }
-} 

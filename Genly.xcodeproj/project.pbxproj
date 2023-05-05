@@ -22,6 +22,7 @@
 		EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EAC3BCBB2A0184B900D0B5BF /* Alamofire */; };
 		EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */; };
 		EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */; };
+		EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		EAC3BCB82A0184A800D0B5BF /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextControlsPane.swift; sourceTree = "<group>"; };
 		EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStorage.swift; sourceTree = "<group>"; };
+		EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */,
 				EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */,
 				EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */,
+				EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -220,6 +223,7 @@
 				EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */,
 				EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */,
 				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
+				EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */,
 				EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

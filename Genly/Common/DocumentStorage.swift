@@ -11,8 +11,10 @@ struct Document: Identifiable, Codable, Hashable {
   var id: UUID
   var title: String?
   var text: AttributedString
+  var chatHistory: [OpenAIAPI.Message]
   var createdAt: Date
   var lastModifiedAt: Date
+  var templateOptions: SideBarView.TemplateOptions
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
