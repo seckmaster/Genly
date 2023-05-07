@@ -8,9 +8,18 @@
 import SwiftUI
 
 struct SideBarView: View {
-  @ObservedObject var viewModel = ViewModel()
+  @ObservedObject var viewModel: ViewModel
+  var start: ((TemplateOptions) -> Void)?
   
-  var start: (TemplateOptions) -> Void
+  init(viewModel: ViewModel) {
+    self.viewModel = viewModel
+    self.start = nil
+  }
+  
+  init(viewModel: ViewModel, start: @escaping (TemplateOptions) -> Void) {
+    self.viewModel = viewModel
+    self.start = start
+  }
   
   var body: some View {
     HStack {
@@ -48,45 +57,34 @@ struct SideBarView: View {
           }
         }
         HStack(spacing: 40) {
-          switch viewModel.useCaseOption {
-          case .blogIdeaAndOutline:
-            PairView(text: "Primary keyword") { 
-              TextField("Keyword", text: $viewModel.keyword)
-            }
-          case .blogSection:
-            PairView(text: "Keywords (separate with comma - ',')") { 
-              TextField("Keywords", text: $viewModel.keyword)
-            }
-          case .businessPitch:
-            PairView(text: "Business idea") { 
-              TextField("Business idea", text: $viewModel.keyword)
-            }
-          case .email:
-            PairView(text: "Key points") { 
-              TextField("Key points", text: $viewModel.keyword)
+          PairView(text: "Primary keyword") { 
+            TextField("Keyword", text: $viewModel.keyword)
+          }
+          if !viewModel.useCases.useCases.isEmpty {
+            PairView(text: "Use case") { 
+              DropDownSelectionView(
+                selectedOption: $viewModel.useCaseOption, 
+                placeholder: "Select use case", 
+                options: viewModel.useCases.useCases.map { $0.description }
+              )
             }
           }
-          PairView(text: "Use case") { 
-            DropDownSelectionView(
-              selectedOption: $viewModel.useCaseOption, 
-              placeholder: "Select use case", 
-              options: UseCaseOption.allCases
-            )
-          }
-          Button("Start") { 
-            guard !viewModel.languageOption.isEmpty,
-                  !viewModel.toneOption.isEmpty,
-                  !viewModel.creativityOption.isEmpty,
-                  viewModel.variantsCount > 0,
-                  !viewModel.keyword.isEmpty else { return }
-            start(.init(
-              languageOption: viewModel.languageOption, 
-              toneOption: viewModel.toneOption, 
-              creativityOption: viewModel.creativityOption, 
-              useCaseOption: viewModel.useCaseOption,
-              variantsCount: viewModel.variantsCount, 
-              keyword: viewModel.keyword
-            ))
+          if let start {
+            Button("Start") { 
+              guard !viewModel.languageOption.isEmpty,
+                    !viewModel.toneOption.isEmpty,
+                    !viewModel.creativityOption.isEmpty,
+                    viewModel.variantsCount > 0,
+                    !viewModel.keyword.isEmpty else { return }
+              start(.init(
+                languageOption: viewModel.languageOption, 
+                toneOption: viewModel.toneOption, 
+                creativityOption: viewModel.creativityOption, 
+                useCaseOption: viewModel.useCaseOption,
+                variantsCount: viewModel.variantsCount, 
+                keyword: viewModel.keyword
+              ))
+            }
           }
         }
         .padding(20)
@@ -98,29 +96,21 @@ struct SideBarView: View {
 }
 
 extension SideBarView {
-  enum UseCaseOption: String, Hashable, Equatable, CaseIterable, CustomStringConvertible, Codable {
-    case blogIdeaAndOutline = "Blog idea and outline"
-    case blogSection = "Blog section writing"
-    case businessPitch = "Business pitch"
-    case email = "Email"
-    
-    var description: String { self.rawValue }
-  }
-  
   class ViewModel: ObservableObject {
     @Published var languageOption: String = "English"
     @Published var toneOption: String = "Convincing"
     @Published var creativityOption: String = "Optimal"
-    @Published var useCaseOption: UseCaseOption = .blogIdeaAndOutline
+    @Published var useCaseOption: String = ""
     @Published var variantsCount: Int = 1
     @Published var keyword: String = ""
+    @Published var useCases: UseCases = .init(useCases: [])
   }
   
   struct TemplateOptions: Hashable, Codable {
     var languageOption: String
     var toneOption: String
     var creativityOption: String
-    var useCaseOption: UseCaseOption
+    var useCaseOption: String
     var variantsCount: Int
     var keyword: String
   }

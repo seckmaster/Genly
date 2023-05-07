@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA0B6FF52A06868300C8C968 /* DocumentView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FF42A06868300C8C968 /* DocumentView+ViewModel.swift */; };
+		EA0B6FF72A0686D100C8C968 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FF62A0686D100C8C968 /* Utils.swift */; };
+		EA0B6FF92A0686F500C8C968 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FF82A0686F500C8C968 /* TextView.swift */; };
+		EA0B6FFB2A078A3E00C8C968 /* PromptsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */; };
 		EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */; };
 		EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF222A0151FE005F1A74 /* MainView.swift */; };
 		EA8BEF252A0151FF005F1A74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8BEF242A0151FF005F1A74 /* Assets.xcassets */; };
@@ -26,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA0B6FF42A06868300C8C968 /* DocumentView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DocumentView+ViewModel.swift"; sourceTree = "<group>"; };
+		EA0B6FF62A0686D100C8C968 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		EA0B6FF82A0686F500C8C968 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
+		EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptsStorage.swift; sourceTree = "<group>"; };
 		EA8BEF1D2A0151FE005F1A74 /* Genly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Genly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenlyApp.swift; sourceTree = "<group>"; };
 		EA8BEF222A0151FE005F1A74 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -57,6 +65,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EA0B6FF32A06867700C8C968 /* Document */ = {
+			isa = PBXGroup;
+			children = (
+				EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */,
+				EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */,
+				EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */,
+				EA0B6FF42A06868300C8C968 /* DocumentView+ViewModel.swift */,
+				EA0B6FF62A0686D100C8C968 /* Utils.swift */,
+				EA0B6FF82A0686F500C8C968 /* TextView.swift */,
+			);
+			path = Document;
+			sourceTree = "<group>";
+		};
 		EA8BEF142A0151FE005F1A74 = {
 			isa = PBXGroup;
 			children = (
@@ -78,8 +99,8 @@
 			isa = PBXGroup;
 			children = (
 				EA8BEF292A0151FF005F1A74 /* Genly.entitlements */,
-				EAC3BCC02A02D07C00D0B5BF /* Common */,
 				EAC3BCBF2A02CFE800D0B5BF /* Resources */,
+				EAC3BCC02A02D07C00D0B5BF /* Common */,
 				EA8BEF3C2A0165BD005F1A74 /* Views */,
 			);
 			path = Genly;
@@ -103,13 +124,11 @@
 		EA8BEF3C2A0165BD005F1A74 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				EA0B6FF32A06867700C8C968 /* Document */,
 				EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */,
 				EA8BEF222A0151FE005F1A74 /* MainView.swift */,
 				EA8BEF3A2A015DCF005F1A74 /* ApiKeyView.swift */,
 				EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */,
-				EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */,
-				EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */,
-				EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -128,6 +147,7 @@
 			children = (
 				EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */,
 				EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */,
+				EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */,
 				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
 				EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */,
 				EAC3BCB82A0184A800D0B5BF /* Promise.swift */,
@@ -216,12 +236,16 @@
 				EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */,
 				EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */,
 				EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */,
+				EA0B6FF72A0686D100C8C968 /* Utils.swift in Sources */,
 				EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */,
 				EA8BEF392A015B52005F1A74 /* AppConfigStorage.swift in Sources */,
 				EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */,
 				EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */,
 				EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */,
+				EA0B6FFB2A078A3E00C8C968 /* PromptsStorage.swift in Sources */,
+				EA0B6FF92A0686F500C8C968 /* TextView.swift in Sources */,
 				EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */,
+				EA0B6FF52A06868300C8C968 /* DocumentView+ViewModel.swift in Sources */,
 				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
 				EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */,
 				EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */,

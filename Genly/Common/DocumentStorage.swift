@@ -19,6 +19,11 @@ struct Document: Identifiable, Codable, Hashable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
   }
+  
+  var displayName: String {
+    if let title, !title.isEmpty { return title }
+    return id.uuidString
+  }
 }
 
 struct DocumentStorage {
