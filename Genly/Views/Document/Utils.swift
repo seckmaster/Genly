@@ -5,7 +5,6 @@
 //  Created by Toni K. Turk on 06/05/2023.
 //
 
-import AppKit
 import SwiftUI
 
 func parseMarkdown(
@@ -73,16 +72,21 @@ func parseMarkdown(
   }
 }
 
-extension NSFont {
+extension MyFont {
   var isHeading1: Bool {
-    self.pointSize == NSFont.heading1.pointSize
+    self.pointSize == MyFont.heading1.pointSize
   }
   var isHeading2: Bool {
-    self.pointSize == NSFont.heading2.pointSize
+    self.pointSize == MyFont.heading2.pointSize
   }
   var isHeading3: Bool {
-    self.pointSize == NSFont.heading3.pointSize
+    self.pointSize == MyFont.heading3.pointSize
   }
+}
+
+#if os(macOS)
+import AppKit
+extension MyFont {
   var isBold: Bool {
     NSFontTraitMask(rawValue: UInt(fontDescriptor.symbolicTraits.rawValue)).contains(.boldFontMask)
   }
@@ -93,23 +97,23 @@ extension NSFont {
     fatalError()
   }
   
-  static var heading1: NSFont { .boldSystemFont(ofSize: 24) }
-  static var heading2: NSFont { .boldSystemFont(ofSize: 20) }
-  static var heading3: NSFont { .boldSystemFont(ofSize: 16) }
+  static var heading1: MyFont { .boldSystemFont(ofSize: 24) }
+  static var heading2: MyFont { .boldSystemFont(ofSize: 20) }
+  static var heading3: MyFont { .boldSystemFont(ofSize: 16) }
   
-  func withTraits(_ traits: [NSFontDescriptor.SymbolicTraits?]) -> NSFont {
+  func withTraits(_ traits: [NSFontDescriptor.SymbolicTraits?]) -> MyFont {
     let descriptor = fontDescriptor
       .withSymbolicTraits(NSFontDescriptor.SymbolicTraits(traits.compactMap { $0 }))
     return .init(descriptor: descriptor, size: descriptor.pointSize)!
   }
   
-  func withTraits(_ traits: NSFontDescriptor.SymbolicTraits...) -> NSFont {
+  func withTraits(_ traits: NSFontDescriptor.SymbolicTraits...) -> MyFont {
     let descriptor = fontDescriptor
       .withSymbolicTraits(NSFontDescriptor.SymbolicTraits(traits))
     return .init(descriptor: descriptor, size: descriptor.pointSize)!
   }
   
-  func withSize(_ size: CGFloat) -> NSFont {
+  func withSize(_ size: CGFloat) -> MyFont {
     let descriptor = fontDescriptor
     return .init(descriptor: descriptor, size: size)!
   }
@@ -118,3 +122,52 @@ extension NSFont {
     fontDescriptor.symbolicTraits
   }
 }
+#elseif os(iOS)
+import UIKit
+extension MyFont {
+  var isBold: Bool {
+    fontDescriptor.symbolicTraits.contains(.traitBold)
+  }
+  var isItalic: Bool {
+    fontDescriptor.symbolicTraits.contains(.traitItalic)
+  }
+  var isUnderlined: Bool {
+    fatalError()
+  }
+  
+  static var heading1: MyFont { .boldSystemFont(ofSize: 24) }
+  static var heading2: MyFont { .boldSystemFont(ofSize: 20) }
+  static var heading3: MyFont { .boldSystemFont(ofSize: 16) }
+  
+  func withTraits(_ traits: [UIFontDescriptor.SymbolicTraits?]) -> MyFont {
+    let descriptor = fontDescriptor
+      .withSymbolicTraits(UIFontDescriptor.SymbolicTraits(traits.compactMap { $0 }))!
+    return .init(descriptor: descriptor, size: descriptor.pointSize)
+  }
+  
+  func withTraits(_ traits: UIFontDescriptor.SymbolicTraits...) -> MyFont {
+    let descriptor = fontDescriptor
+      .withSymbolicTraits(UIFontDescriptor.SymbolicTraits(traits))!
+    return .init(descriptor: descriptor, size: descriptor.pointSize)
+  }
+  
+  func withSize(_ size: CGFloat) -> MyFont {
+    let descriptor = fontDescriptor
+    return .init(descriptor: descriptor, size: size)
+  }
+  
+  var traits: UIFontDescriptor.SymbolicTraits {
+    fontDescriptor.symbolicTraits
+  }
+}
+
+extension UIFontDescriptor.SymbolicTraits {
+  static var italic: UIFontDescriptor.SymbolicTraits {
+    .traitItalic
+  }
+  
+  static var bold: UIFontDescriptor.SymbolicTraits {
+    .traitBold
+  }
+}
+#endif

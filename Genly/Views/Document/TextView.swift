@@ -6,54 +6,102 @@
 //
 
 import SwiftUI
+#if os(iOS)
+import UIKit
+
+typealias ViewRepresentable = UIViewRepresentable
+typealias OldSchoolScrollView = UIScrollView
+typealias OldSchoolTextView = UITextView
+typealias OldSchoolTextViewDelegate = UITextViewDelegate
+typealias OldSchoolColor = UIColor
+#elseif os(macOS)
 import AppKit
 
-struct TextView: NSViewRepresentable {
+typealias ViewRepresentable = NSViewRepresentable
+typealias OldSchoolScrollView = NSScrollView
+typealias OldSchoolTextView = NSTextView
+typealias OldSchoolTextViewDelegate = NSTextViewDelegate
+typealias OldSchoolColor = NSColor
+#endif
+
+struct TextView: ViewRepresentable {
   @Binding var text: AttributedString
   weak var delegate: TextViewDelegate?
   
-  func makeNSView(context: Context) -> NSScrollView {
-    let textView = NSTextView.scrollableTextView()
-    delegate?.textView = (textView.documentView as! NSTextView)
+#if os(macOS)
+  func makeNSView(context: Context) -> OldSchoolScrollView {
+    let textView = OldSchoolTextView.scrollableTextView()
+    delegate?.textView = (textView.documentView as! OldSchoolTextView)
     updateNSView(textView, context: context)
     return textView
   }
   
-  func updateNSView(_ textView: NSScrollView, context: Context) {
+  func updateNSView(_ scrollView: OldSchoolScrollView, context: Context) {
     guard delegate?.text != text else { return }
     print("func updateNSView(_ textView: NSScrollView, context: Context) {")
     
+    let textView = scrollView.documentView as! OldSchoolTextView
+    let scroll = scrollView.documentVisibleRect.origin
+    
     let attributedString = NSMutableAttributedString(text)
     attributedString.setForegroundColor(to: .white, at: .init(location: 0, length: attributedString.length))
-    let ranges = (textView.documentView as! NSTextView).selectedRanges
-    (textView.documentView as! NSTextView).delegate = nil
-    (textView.documentView as! NSTextView).textStorage?.setAttributedString(attributedString)
-    (textView.documentView as! NSTextView).selectedRanges = ranges
-    (textView.documentView as! NSTextView).delegate = delegate
+    let ranges = textView.selectedRanges
+    
+    textView.delegate = nil
+    textView.textStorage?.setAttributedString(attributedString)
+    textView.selectedRanges = ranges
+    textView.scroll(scroll)
+    textView.delegate = delegate
     delegate?.text = text
     delegate?.view.value.viewModel.updateDocument()
   }
+#elseif os(iOS)
+  func makeUIView(context: Context) -> OldSchoolTextView {
+    let textView = OldSchoolTextView()
+    delegate?.textView = textView
+    updateUIView(textView, context: context)
+    return textView
+  } 
+  
+  func updateUIView(_ textView: OldSchoolTextView, context: Context) {
+    guard delegate?.text != text else { return }
+    
+    let scroll = textView.contentOffset
+    let attributedString = NSMutableAttributedString(text)
+    attributedString.setForegroundColor(to: .white, at: .init(location: 0, length: attributedString.length))
+    let range = textView.selectedRange
+    
+    textView.delegate = nil
+    textView.attributedText = attributedString
+    textView.selectedRange = range
+    textView.setContentOffset(scroll, animated: false)
+    textView.delegate = delegate
+    delegate?.text = text
+    delegate?.view.value.viewModel.updateDocument()
+  }
+#endif 
 }
 
-class TextViewDelegate: NSObject, NSTextViewDelegate {
+class TextViewDelegate: NSObject, OldSchoolTextViewDelegate {
   let view: Box<DocumentView>
   var text: AttributedString?
-  weak var textView: NSTextView?
+  weak var textView: OldSchoolTextView?
   
   init(view: Box<DocumentView>) {
     self.view = view
   }
   
+#if os(macOS)
   func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRanges oldSelectedCharRanges: [NSValue], toCharacterRanges newSelectedCharRanges: [NSValue]) -> [NSValue] {
     guard let range = newSelectedCharRanges.first as? NSRange else { return newSelectedCharRanges }
     guard textView.string.utf16.count >= range.upperBound else { return newSelectedCharRanges }
     
     let attrSubstr = textView.attributedString().fontAttributes(in: range)
-    let isBold     = (attrSubstr[.font] as? NSFont)?.isBold ?? false
-    let isItalic   = (attrSubstr[.font] as? NSFont)?.isItalic ?? false
-    let isHeading1 = (attrSubstr[.font] as? NSFont)?.isHeading1 ?? false
-    let isHeading2 = (attrSubstr[.font] as? NSFont)?.isHeading2 ?? false
-    let isHeading3 = (attrSubstr[.font] as? NSFont)?.isHeading3 ?? false
+    let isBold     = (attrSubstr[.font] as? MyFont)?.isBold ?? false
+    let isItalic   = (attrSubstr[.font] as? MyFont)?.isItalic ?? false
+    let isHeading1 = (attrSubstr[.font] as? MyFont)?.isHeading1 ?? false
+    let isHeading2 = (attrSubstr[.font] as? MyFont)?.isHeading2 ?? false
+    let isHeading3 = (attrSubstr[.font] as? MyFont)?.isHeading3 ?? false
     
     self.view.value.viewModel.isBoldHighlighted = isBold
     self.view.value.viewModel.isItalicHighlighted = isItalic
@@ -79,8 +127,8 @@ class TextViewDelegate: NSObject, NSTextViewDelegate {
     let fontAttributes: [NSAttributedString.Key : Any]
     if textView.string.isEmpty {
       fontAttributes = [
-        .foregroundColor: NSColor.white,
-        .font: NSFont.systemFont(ofSize: 14)
+        .foregroundColor: OldSchoolColor.white,
+        .font: MyFont.systemFont(ofSize: 14)
       ]
     } else if let char = textView.string.character(at: range.lowerBound) {
       let isNewLine = char.isNewline
@@ -97,14 +145,14 @@ class TextViewDelegate: NSObject, NSTextViewDelegate {
           .fontAttributes(in: range)
       } else {
         fontAttributes = [
-          .foregroundColor: NSColor.white,
-          .font: NSFont.systemFont(ofSize: 14)
+          .foregroundColor: OldSchoolColor.white,
+          .font: MyFont.systemFont(ofSize: 14)
         ]
       }
     } else {
       fontAttributes = [
-        .foregroundColor: NSColor.white,
-        .font: NSFont.systemFont(ofSize: 14)
+        .foregroundColor: OldSchoolColor.white,
+        .font: MyFont.systemFont(ofSize: 14)
       ]
     }
     
@@ -118,4 +166,5 @@ class TextViewDelegate: NSObject, NSTextViewDelegate {
     textView.selectedRanges = [range as NSValue]
     return true
   }
+#endif
 }

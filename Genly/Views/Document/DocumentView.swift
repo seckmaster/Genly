@@ -5,7 +5,7 @@
 //  Created by Toni K. Turk on 02/05/2023.
 //
 
-import AppKit
+//import AppKit
 import SwiftUI
 import RichTextKit
 
@@ -201,11 +201,19 @@ struct DocumentView: View {
               }
             }
             TextView(text: $viewModel.text, delegate: delegate)
-              .focusable()
+//              .focusable()
           }
-          ScrollView(.vertical) {
-            ScrollViewReader { reader in
-              Text(viewModel.chat)
+          
+          ScrollViewReader { reader in
+            ScrollView(.vertical) {
+              VStack {
+                Text(viewModel.chat)
+                  .onChange(of: viewModel.chat) { newValue in
+                    reader.scrollTo("end")
+                  }
+                EmptyView()
+                  .tag("end")
+              }
             }
           }.frame(maxWidth: metrics.size.width * 0.27)
         }
@@ -213,7 +221,7 @@ struct DocumentView: View {
     }
     .padding()
     .onAppear {
-      viewModel.createNewDocument()
+//      viewModel.createNewDocument()
 //      viewModel.loadGUI()
     }
   }
@@ -221,9 +229,9 @@ struct DocumentView: View {
 
 private extension DocumentView {
   func handleTextEditingAction(
-    predicate: (NSFont) -> Bool,
-    ifPredicate: (NSFont) -> NSFont,
-    ifNotPredicate: (NSFont) -> NSFont,
+    predicate: (MyFont) -> Bool,
+    ifPredicate: (MyFont) -> MyFont,
+    ifNotPredicate: (MyFont) -> MyFont,
     applyToWholeParagraph: Bool = true,
     targetVariable: inout Bool
   ) {
@@ -245,26 +253,30 @@ private extension DocumentView {
     
     let range = Range<AttributedString.Index>(nsRange, in: viewModel.text)!
     var string = AttributedString(viewModel.text[range])
-    let nsfont = (NSAttributedString(string).fontAttributes(
+#if os(iOS)
+    let nsFont = NSAttributedString(string).font(at: .init(location: 0, length: nsRange.length)) ?? .systemFont(ofSize: 14)
+#elseif os(macOS)
+    let nsFont = (NSAttributedString(string).fontAttributes(
       in: .init(
         location: 0, 
         length: nsRange.length
-      ))[.font] as? NSFont
+      ))[.font] as? MyFont
     ) ?? .systemFont(ofSize: 14)
+#endif
     
     var container = AttributeContainer()
     container.foregroundColor = string.foregroundColor
-    if predicate(nsfont) {
-      container.font = ifPredicate(nsfont)
+    if predicate(nsFont) {
+      container.font = ifPredicate(nsFont)
     } else {
-      container.font = ifNotPredicate(nsfont)
+      container.font = ifNotPredicate(nsFont)
     }
     string.setAttributes(container)
     viewModel.text.replaceSubrange(
       range,
       with: string
     )
-    targetVariable = !predicate(nsfont)
+    targetVariable = !predicate(nsFont)
   }
 }
 

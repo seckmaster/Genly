@@ -59,6 +59,7 @@ extension DocumentView {
         )
         self.title = ""
         self.chat = .init()
+        createNewDocument()
       }
     }
   }
@@ -113,7 +114,8 @@ extension DocumentView.ViewModel {
         print("OpenAI did respond:")
         print(responses[0])
         
-        self.text = parseMarkdown(responses[0])
+//        self.text = parseMarkdown(responses[0])
+        self.text.insert(parseMarkdown(responses[0]), at: self.text.startIndex)
         self.document.chatHistory = gptHistory
         self.updateDocument()
       } catch {
@@ -147,7 +149,7 @@ extension DocumentView.ViewModel {
     systemPrompt: String,
     userPrompt: String,
     createNewHistory: Bool = true,
-    primaryForegroundColor: Color? = .init(nsColor: .magenta)
+    primaryForegroundColor: Color? = .init(color: .magenta)
   ) async {
     if createNewHistory {
       gptHistory.append(.init(
@@ -266,3 +268,15 @@ extension DocumentView.ViewModel {
     return string
   }
 } 
+
+extension Color {
+#if os(iOS)
+  init(color: UIColor) {
+    self.init(uiColor: color)
+  }
+#elseif os(macOS)
+  init(color: NSColor) {
+    self.init(nsColor: color)
+  }
+#endif
+}
