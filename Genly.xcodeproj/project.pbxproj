@@ -23,9 +23,6 @@
 		EAC237B72A08FD6600748EC4 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC237B62A08FD6600748EC4 /* Font.swift */; };
 		EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */; };
 		EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */; };
-		EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */; };
-		EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB82A0184A800D0B5BF /* Promise.swift */; };
-		EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EAC3BCBB2A0184B900D0B5BF /* Alamofire */; };
 		EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */; };
 		EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */; };
 		EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */; };
@@ -49,8 +46,6 @@
 		EAC237B62A08FD6600748EC4 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
 		EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIAPI.swift; sourceTree = "<group>"; };
-		EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireNetworkClient.swift; sourceTree = "<group>"; };
-		EAC3BCB82A0184A800D0B5BF /* Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextControlsPane.swift; sourceTree = "<group>"; };
 		EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStorage.swift; sourceTree = "<group>"; };
 		EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandsView.swift; sourceTree = "<group>"; };
@@ -62,7 +57,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA8BEF332A015277005F1A74 /* RichTextKit in Frameworks */,
-				EAC3BCBC2A0184B900D0B5BF /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,8 +148,6 @@
 				EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */,
 				EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */,
 				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
-				EAC3BCB62A01849600D0B5BF /* AlamofireNetworkClient.swift */,
-				EAC3BCB82A0184A800D0B5BF /* Promise.swift */,
 				EAC237B62A08FD6600748EC4 /* Font.swift */,
 			);
 			path = Common;
@@ -179,7 +171,6 @@
 			name = Genly;
 			packageProductDependencies = (
 				EA8BEF322A015277005F1A74 /* RichTextKit */,
-				EAC3BCBB2A0184B900D0B5BF /* Alamofire */,
 			);
 			productName = Genly;
 			productReference = EA8BEF1D2A0151FE005F1A74 /* Genly.app */;
@@ -211,7 +202,6 @@
 			mainGroup = EA8BEF142A0151FE005F1A74;
 			packageReferences = (
 				EA8BEF2F2A015222005F1A74 /* XCRemoteSwiftPackageReference "RichTextKit" */,
-				EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = EA8BEF1E2A0151FE005F1A74 /* Products */;
 			projectDirPath = "";
@@ -243,14 +233,12 @@
 				EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */,
 				EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */,
 				EA0B6FF72A0686D100C8C968 /* Utils.swift in Sources */,
-				EAC3BCB72A01849600D0B5BF /* AlamofireNetworkClient.swift in Sources */,
 				EA8BEF392A015B52005F1A74 /* AppConfigStorage.swift in Sources */,
 				EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */,
 				EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */,
 				EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */,
 				EA0B6FFB2A078A3E00C8C968 /* PromptsStorage.swift in Sources */,
 				EA0B6FF92A0686F500C8C968 /* TextView.swift in Sources */,
-				EAC3BCB92A0184A800D0B5BF /* Promise.swift in Sources */,
 				EAC237B72A08FD6600748EC4 /* Font.swift in Sources */,
 				EA0B6FF52A06868300C8C968 /* DocumentView+ViewModel.swift in Sources */,
 				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
@@ -474,14 +462,6 @@
 				minimumVersion = 0.5.2;
 			};
 		};
-		EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -489,11 +469,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EA8BEF2F2A015222005F1A74 /* XCRemoteSwiftPackageReference "RichTextKit" */;
 			productName = RichTextKit;
-		};
-		EAC3BCBB2A0184B900D0B5BF /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EAC3BCBA2A0184B900D0B5BF /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

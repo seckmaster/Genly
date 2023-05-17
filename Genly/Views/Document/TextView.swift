@@ -16,6 +16,7 @@ typealias OldSchoolTextViewDelegate = UITextViewDelegate
 typealias OldSchoolColor = UIColor
 #elseif os(macOS)
 import AppKit
+import RichTextKit
 
 typealias ViewRepresentable = NSViewRepresentable
 typealias OldSchoolScrollView = NSScrollView
@@ -46,7 +47,7 @@ struct TextView: ViewRepresentable {
     let scroll = scrollView.documentVisibleRect.origin
     
     let attributedString = NSMutableAttributedString(text)
-    attributedString.setForegroundColor(to: .white, at: .init(location: 0, length: attributedString.length))
+    attributedString.setAttributes([.foregroundColor: NSColor.white], range: .init(location: 0, length: attributedString.length))
     let ranges = textView.selectedRanges
     
     textView.delegate = nil
@@ -81,7 +82,7 @@ struct TextView: ViewRepresentable {
     delegate?.text = text
     delegate?.view.value.viewModel.updateDocument()
   }
-#endif 
+#endif
 }
 
 class TextViewDelegate: NSObject, OldSchoolTextViewDelegate {
@@ -170,3 +171,9 @@ class TextViewDelegate: NSObject, OldSchoolTextViewDelegate {
   }
 #endif
 }
+//extension String {
+//  func character(at index: Int) -> String.Element? {
+//    guard index >= 0 && index < utf16.count else { return nil }
+//    return self[self.index(startIndex, offsetBy: index)]
+//  }
+//}

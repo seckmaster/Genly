@@ -87,6 +87,7 @@ struct CommandLineView: View {
           messages: history.filter { $0.role != "error" }, 
           apiKey: apiKey
         )
+        guard !response.isEmpty else { return }
         history.append(.init(role: "assistant", content: response[0]))
         historyText = chatToAttributedString(history)
       } catch {

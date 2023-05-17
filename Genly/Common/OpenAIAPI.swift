@@ -8,11 +8,18 @@
 import Foundation
 
 class OpenAIAPI {
-  let client = AlamofireNetworkClient()
-  
   struct Message: Encodable, Decodable, Equatable, Hashable {
     let role: String
     let content: String
+  }
+  
+  private let session: URLSession
+  
+  init() {
+    let config = URLSessionConfiguration.default
+    config.timeoutIntervalForRequest = 600
+    config.timeoutIntervalForResource = 600
+    self.session = .init(configuration: config)
   }
   
   func completion(
@@ -34,19 +41,23 @@ class OpenAIAPI {
       temperature: temperature,
       n: variants
     )
-      let data = try await client
-        .request(
-          method: .post, 
-          endpoint: "https://api.openai.com/v1/chat/completions",
-          headers: [.authorization(bearerToken: apiKey)],
-          encode: request,
-          parameterEncoder: .json
-        )
-        .validate()
-        .asDataAsync
-      guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { 
-        throw NSError()
-      }
-      return ((((json["choices"] as? [[String: Any]])?[0] as? [String: Any])?["message"] as? [String: Any])?["content"] as? String).map { [$0] } ?? []
+    
+    var urlRequest = URLRequest(url: "https://api.openai.com/v1/chat/completions")
+    urlRequest.httpBody = try JSONEncoder().encode(request)
+    urlRequest.httpMethod = "POST"
+    urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    urlRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+    
+    let data = try await session.data(for: urlRequest).0
+    guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { 
+      throw NSError()
+    }
+    return ((((json["choices"] as? [[String: Any]])?[0] as? [String: Any])?["message"] as? [String: Any])?["content"] as? String).map { [$0] } ?? []
+  }
+}
+
+extension URL: ExpressibleByStringLiteral {
+  public init(stringLiteral value: StringLiteralType) {
+    self = .init(string: value)!
   }
 }

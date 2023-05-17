@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import RichTextKit
 
 private var documentViewModel: DocumentView.ViewModel?
 
