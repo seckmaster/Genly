@@ -20,7 +20,7 @@ class PromptsStorage {
     return prompts
   } 
   
-  private var url: URL {
+  var url: URL {
     FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appending(path: "prompts.json")
   } 
 }

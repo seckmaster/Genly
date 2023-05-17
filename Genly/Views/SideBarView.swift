@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SideBarView: View {
   @ObservedObject var viewModel: ViewModel
+  @State var popoverShown: Bool = false
+  @State var popoverURL: String = ""
   var start: ((TemplateOptions) -> Void)?
   
   init(viewModel: ViewModel) {
@@ -22,75 +24,94 @@ struct SideBarView: View {
   }
   
   var body: some View {
-    HStack {
-      VStack {
-        HStack(spacing: 40) {
-          PairView(text: "Language") { 
-            DropDownSelectionView(
-              selectedOption: $viewModel.languageOption, 
-              placeholder: "Select langauge", 
-              options: ["English", "Slovene"]
-            )
-          }
-          PairView(text: "Tone") { 
-            DropDownSelectionView(
-              selectedOption: $viewModel.toneOption, 
-              placeholder: "Select tone", 
-              options: ["Convincing", "Academic", "Professional", "Friendly", "Formal", "Funny"]
-            )
-          }
+    VStack {
+      HStack {
+        Button {
+          popoverShown = true
+          popoverURL = String(PromptsStorage().url.absoluteString.dropFirst(7))
+        } label: {
+          Image(systemName: "info.circle")
         }
-        HStack(spacing: 40) {
-          PairView(text: "Creativity") { 
-            DropDownSelectionView(
-              selectedOption: $viewModel.creativityOption, 
-              placeholder: "Select creativity level", 
-              options: ["High", "Mid", "Low", "Optimal"]
-            )
-          }
-          PairView(text: "Variants") { 
-            DropDownSelectionView(
-              selectedOption: $viewModel.variantsCount, 
-              placeholder: "Select number of generated variants", 
-              options: [1, 2, 3]
-            )
-          }
+        Button {
+          try? AppConfigStorage().delete()
+        } label: {
+          Text("Clear API key")
         }
-        HStack(spacing: 40) {
-          PairView(text: "Primary keyword") { 
-            TextField("Keyword", text: $viewModel.keyword)
-          }
-          if !viewModel.useCases.useCases.isEmpty {
-            PairView(text: "Use case") { 
+      }
+      HStack {
+        VStack {
+          HStack(spacing: 40) {
+            PairView(text: "Language") { 
               DropDownSelectionView(
-                selectedOption: $viewModel.useCaseOption, 
-                placeholder: "Select use case", 
-                options: viewModel.useCases.useCases.map { $0.description }
+                selectedOption: $viewModel.languageOption, 
+                placeholder: "Select langauge", 
+                options: ["English", "Slovene"]
+              )
+            }
+            PairView(text: "Tone") { 
+              DropDownSelectionView(
+                selectedOption: $viewModel.toneOption, 
+                placeholder: "Select tone", 
+                options: ["Convincing", "Academic", "Professional", "Friendly", "Formal", "Funny"]
               )
             }
           }
-          if let start {
-            Button("Start") { 
-              guard !viewModel.languageOption.isEmpty,
-                    !viewModel.toneOption.isEmpty,
-                    !viewModel.creativityOption.isEmpty,
-                    viewModel.variantsCount > 0,
-                    !viewModel.keyword.isEmpty else { return }
-              start(.init(
-                languageOption: viewModel.languageOption, 
-                toneOption: viewModel.toneOption, 
-                creativityOption: viewModel.creativityOption, 
-                useCaseOption: viewModel.useCaseOption,
-                variantsCount: viewModel.variantsCount, 
-                keyword: viewModel.keyword
-              ))
+          HStack(spacing: 40) {
+            PairView(text: "Creativity") { 
+              DropDownSelectionView(
+                selectedOption: $viewModel.creativityOption, 
+                placeholder: "Select creativity level", 
+                options: ["High", "Mid", "Low", "Optimal"]
+              )
+            }
+            PairView(text: "Variants") { 
+              DropDownSelectionView(
+                selectedOption: $viewModel.variantsCount, 
+                placeholder: "Select number of generated variants", 
+                options: [1, 2, 3]
+              )
+            }
+          }
+          HStack(spacing: 40) {
+            PairView(text: "Primary keyword") { 
+              TextField("Keyword", text: $viewModel.keyword)
+            }
+            if !viewModel.useCases.useCases.isEmpty {
+              PairView(text: "Use case") { 
+                DropDownSelectionView(
+                  selectedOption: $viewModel.useCaseOption, 
+                  placeholder: "Select use case", 
+                  options: viewModel.useCases.useCases.map { $0.description }
+                )
+              }
+            }
+            if let start {
+              Button("Start") { 
+                guard !viewModel.languageOption.isEmpty,
+                      !viewModel.toneOption.isEmpty,
+                      !viewModel.creativityOption.isEmpty,
+                      viewModel.variantsCount > 0,
+                      !viewModel.useCaseOption.isEmpty,
+                      !viewModel.keyword.isEmpty else { return }
+                start(.init(
+                  languageOption: viewModel.languageOption, 
+                  toneOption: viewModel.toneOption, 
+                  creativityOption: viewModel.creativityOption, 
+                  useCaseOption: viewModel.useCaseOption,
+                  variantsCount: viewModel.variantsCount, 
+                  keyword: viewModel.keyword
+                ))
+              }
             }
           }
         }
-        .padding(20)
       }
-      .cornerRadius(16)
-      .background(Color(red: 0.2, green: 0.2, blue: 0.2))
+      .padding()
+      .background(Color.palette.background2)
+      .cornerRadius(12)
+      .popover(isPresented: $popoverShown) {
+        TextField("", text: $popoverURL)
+      }
     }
   }
 }

@@ -31,6 +31,8 @@ struct TextView: ViewRepresentable {
 #if os(macOS)
   func makeNSView(context: Context) -> OldSchoolScrollView {
     let textView = OldSchoolTextView.scrollableTextView()
+    textView.backgroundColor = .clear
+    (textView.documentView as! NSTextView).backgroundColor = .clear
     delegate?.textView = (textView.documentView as! OldSchoolTextView)
     updateNSView(textView, context: context)
     return textView

@@ -11,6 +11,7 @@
 		EA0B6FF72A0686D100C8C968 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FF62A0686D100C8C968 /* Utils.swift */; };
 		EA0B6FF92A0686F500C8C968 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FF82A0686F500C8C968 /* TextView.swift */; };
 		EA0B6FFB2A078A3E00C8C968 /* PromptsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */; };
+		EA1CC1B92A0B9E6E00DF2D26 /* CommandLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1CC1B82A0B9E6E00DF2D26 /* CommandLineView.swift */; };
 		EA8BEF212A0151FE005F1A74 /* GenlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */; };
 		EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF222A0151FE005F1A74 /* MainView.swift */; };
 		EA8BEF252A0151FF005F1A74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA8BEF242A0151FF005F1A74 /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 		EA0B6FF62A0686D100C8C968 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		EA0B6FF82A0686F500C8C968 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptsStorage.swift; sourceTree = "<group>"; };
+		EA1CC1B82A0B9E6E00DF2D26 /* CommandLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineView.swift; sourceTree = "<group>"; };
 		EA8BEF1D2A0151FE005F1A74 /* Genly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Genly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA8BEF202A0151FE005F1A74 /* GenlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenlyApp.swift; sourceTree = "<group>"; };
 		EA8BEF222A0151FE005F1A74 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */,
 				EA0B6FF42A06868300C8C968 /* DocumentView+ViewModel.swift */,
 				EA0B6FF82A0686F500C8C968 /* TextView.swift */,
+				EA1CC1B82A0B9E6E00DF2D26 /* CommandLineView.swift */,
 				EA0B6FF62A0686D100C8C968 /* Utils.swift */,
 			);
 			path = Document;
@@ -251,6 +254,7 @@
 				EAC237B72A08FD6600748EC4 /* Font.swift in Sources */,
 				EA0B6FF52A06868300C8C968 /* DocumentView+ViewModel.swift in Sources */,
 				EA8BEF3B2A015DCF005F1A74 /* ApiKeyView.swift in Sources */,
+				EA1CC1B92A0B9E6E00DF2D26 /* CommandLineView.swift in Sources */,
 				EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */,
 				EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */,
 			);
@@ -392,6 +396,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tss.genly.Genly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -424,6 +429,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tss.genly.Genly;
 				PRODUCT_NAME = "$(TARGET_NAME)";

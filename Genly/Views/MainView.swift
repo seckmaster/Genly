@@ -8,6 +8,8 @@
 import SwiftUI
 import RichTextKit
 
+private var documentViewModel: DocumentView.ViewModel?
+
 struct MainView: View {
   @ObservedObject var router: Router
   @ObservedObject var viewModel: ViewModel
@@ -15,40 +17,88 @@ struct MainView: View {
   @State var options: SideBarView.TemplateOptions?
   
   var body: some View {
-    NavigationStack(path: $router.path) {
-      HStack {
-        SideBarView(viewModel: sideBarViewModel) {
-          options = $0
-          router.path.append($0)
-        }
-        .padding(40)
-        List {
-          ForEach(viewModel.documents, id: \.self) { document in 
-            Button(document.displayName) {
-              router.path.append(document)
+    GeometryReader { reader in
+      NavigationStack(path: $router.path) {
+        HStack {
+          VStack {
+            SideBarView(viewModel: sideBarViewModel) {
+              options = $0
+              router.path.append($0)
+            }
+            .padding(40)
+            if let apiKey = viewModel.apiKey {
+              CommandLineView(viewModel: .init(apiKey: apiKey))
+            }
+          }
+          GeometryReader { reader in 
+            List {
+              ForEach(viewModel.documents, id: \.self) { document in
+                Button {
+                  router.path.append(document)
+                } label: {
+                  ZStack {
+                    RightClickableSwiftUIView {
+                      viewModel.popoverDocument = .init(
+                        point: .init(), 
+                        document: document
+                      )
+                    }
+                    Text(document.displayName)
+                  }
+                }
+                .buttonStyle(.plain)
+                .frame(width: reader.size.width, height: 40)
+                .background(Color(nsColor: .darkGray))
+              }
             }
           }
         }
+        .navigationDestination(for: SideBarView.TemplateOptions.self) { options in
+          { () -> DocumentView in
+            documentViewModel = documentViewModel ?? .init(
+              source: .new(options), 
+              apiKey: viewModel.apiKey ?? "", 
+              useCase: viewModel.useCases.useCases.first { $0.prompt.name == options.useCaseOption }!
+            )
+            return DocumentView(
+              documentViewModel: documentViewModel!,
+              apiKey: viewModel.apiKey ?? "",
+              sideBarViewModel: sideBarViewModel,
+              router: router
+            )
+          }()
+        }
+        .navigationDestination(for: Document.self) { document in
+          DocumentView(
+            documentViewModel: .init(
+              source: .existing(document), 
+              apiKey: viewModel.apiKey ?? "", 
+              useCase: viewModel.useCases.useCases.first { $0.prompt.name == document.templateOptions.useCaseOption }!
+            ), 
+            apiKey: viewModel.apiKey ?? "",
+            sideBarViewModel: sideBarViewModel,
+            router: router
+          )
+        }
       }
-      .navigationDestination(for: SideBarView.TemplateOptions.self) { options in
+      .popover(
+        item: $viewModel.popoverDocument
+      ) { document in
         DocumentView(
-          source: .new(options), 
-          apiKey: try! AppConfigStorage().config.apiKey,
+          documentViewModel: .init(
+            source: .existing(document.document), 
+            apiKey: viewModel.apiKey ?? "", 
+            useCase: viewModel.useCases.useCases.first { $0.prompt.name == document.document.templateOptions.useCaseOption }!
+          ), 
+          apiKey: viewModel.apiKey ?? "",
           sideBarViewModel: sideBarViewModel,
-          router: router,
-          commands: viewModel.useCases.useCases.first { $0.prompt.name ==  options.useCaseOption }!.commands
+          router: router
         )
+        .frame(minWidth: reader.size.width * 0.8, minHeight: reader.size.height * 0.8)
+        .onDisappear {
+          load(initial: false)
+        }
       }
-      .navigationDestination(for: Document.self) { document in
-        DocumentView(
-          source: .existing(document), 
-          apiKey: try! AppConfigStorage().config.apiKey,
-          sideBarViewModel: sideBarViewModel,
-          router: router,
-          commands: viewModel.useCases.useCases.first { $0.prompt.name == document.templateOptions.useCaseOption }!.commands
-        )
-      }
-//      .navigationTitle("Genly")
     }
     .navigationTitle("Genly")
     .onAppear {
@@ -65,6 +115,7 @@ struct MainView: View {
     )
     .onChange(of: router.path) { @MainActor newValue in
       load(initial: false)
+      documentViewModel = nil
     }
   }
   
@@ -107,6 +158,7 @@ extension MainView {
     @Published var mustEnterApiKey: Bool = false
     @Published var documents: [Document] = []
     @Published var useCases: UseCases = .init(useCases: [])
+    @Published var popoverDocument: ClickedDocument?
     
     init(storage: AppConfigStorage = .init()) {
       self.storage = storage
@@ -139,5 +191,43 @@ extension MainView {
     func loadUseCases() throws {
       useCases = try promptsStorage.load()
     }
+  }
+  
+  struct ClickedDocument: Identifiable, Hashable {
+    let point: UnitPoint
+    let document: Document
+    
+    var id: UUID { document.id }
+  }
+}
+
+struct RightClickableSwiftUIView: NSViewRepresentable {
+  let rightAction: () -> Void
+  
+  func makeNSView(context: Context) -> RightClickableView {
+    RightClickableView(rightAction: rightAction)
+  }
+  
+  func updateNSView(_ nsView: RightClickableView, context: NSViewRepresentableContext<RightClickableSwiftUIView>) {
+  }
+}
+
+class RightClickableView: NSView {
+  let rightAction: () -> Void
+  
+  init(rightAction: @escaping () -> Void) {
+    self.rightAction = rightAction
+    super.init(frame: .zero)
+  } 
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func mouseDown(with theEvent: NSEvent) {
+  }
+  
+  override func rightMouseDown(with theEvent: NSEvent) {
+    rightAction()
   }
 }

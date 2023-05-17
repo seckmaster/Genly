@@ -171,3 +171,73 @@ extension UIFontDescriptor.SymbolicTraits {
   }
 }
 #endif
+
+
+func chatToAttributedString(
+  _ chat: [OpenAIAPI.Message]
+) -> AttributedString {
+  var string = AttributedString()
+  for message in chat {
+    switch message.role {
+    case "system":
+      var container = AttributeContainer()
+      container.foregroundColor = .red
+      container.font = .boldSystemFont(ofSize: 14)
+      var substr = AttributedString("⦿  System\n")
+      substr.setAttributes(container)
+      string.append(substr)
+      
+      container = AttributeContainer()
+      container.foregroundColor = .white
+      container.font = .systemFont(ofSize: 14)
+      substr = AttributedString(message.content + "\n" + "\n")
+      substr.setAttributes(container)
+      string.append(substr)
+    case "assistant":
+      var container = AttributeContainer()
+      container.foregroundColor = .orange
+      container.font = .boldSystemFont(ofSize: 14)
+      var substr = AttributedString("⦿  Assistant\n")
+      substr.setAttributes(container)
+      string.append(substr)
+      
+      container = AttributeContainer()
+      container.foregroundColor = .white
+      container.font = .systemFont(ofSize: 14)
+      substr = AttributedString(message.content + "\n" + "\n")
+      substr.setAttributes(container)
+      string.append(substr)
+    case "user":
+      var container = AttributeContainer()
+      container.foregroundColor = .magenta
+      container.font = .boldSystemFont(ofSize: 14)
+      var substr = AttributedString("⦿  User\n")
+      substr.setAttributes(container)
+      string.append(substr)
+      
+      container = AttributeContainer()
+      container.foregroundColor = .white
+      container.font = .systemFont(ofSize: 14)
+      substr = AttributedString(message.content + "\n" + "\n")
+      substr.setAttributes(container)
+      string.append(substr)
+    case "error":
+      var container = AttributeContainer()
+      container.foregroundColor = .orange
+      container.font = .boldSystemFont(ofSize: 14)
+      var substr = AttributedString("⦿  Error\n")
+      substr.setAttributes(container)
+      string.append(substr)
+      
+      container = AttributeContainer()
+      container.foregroundColor = .red
+      container.font = .systemFont(ofSize: 12)
+      substr = AttributedString(message.content + "\n" + "\n")
+      substr.setAttributes(container)
+      string.append(substr)
+    case _:
+      fatalError()
+    }
+  }
+  return string
+}

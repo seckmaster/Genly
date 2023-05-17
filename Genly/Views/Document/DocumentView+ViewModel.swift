@@ -18,7 +18,7 @@ extension DocumentView {
     
     private var gptHistory: [OpenAIAPI.Message] = []
     
-    @Published var commands: [UseCases.Prompt]
+    let useCase: UseCases.UseCase
     @Published var isBoldHighlighted: Bool = false
     @Published var isItalicHighlighted: Bool = false
     @Published var isUnderlineHighlighted: Bool = false
@@ -34,19 +34,20 @@ extension DocumentView {
     init(
       source: DocumentView.DocumentSource, 
       apiKey: String, 
-      commands: [UseCases.Prompt]
+      useCase: UseCases.UseCase
     ) {
       self.source = source
       self.apiKey = apiKey
-      self.commands = commands
+      self.useCase = useCase
       switch source {
       case .existing(let document):
         self.text = document.text
         self.title = document.title ?? ""
         self.document = document
-        self.chat = Self.chatToAttributedString(document.chatHistory)
+        self.chat = chatToAttributedString(document.chatHistory)
         self.gptHistory = document.chatHistory
       case .new(let template):
+        print("Creating new document")
         self.text = .init()
         self.document = .init(
           id: .init(), 
@@ -59,7 +60,6 @@ extension DocumentView {
         )
         self.title = ""
         self.chat = .init()
-        createNewDocument()
       }
     }
   }
@@ -71,14 +71,10 @@ extension DocumentView.ViewModel {
     
     gptHistory.append(.init(
       role: "system", 
-      content: """
-        You are an expert in writing blog posts.
-        
-        Write a blog post outline given relevant keywords inside <keywords></keywords> badge. 
-        The tone of the blog post must be \(document.templateOptions.toneOption). 
-        Output language of the blog post must be \(document.templateOptions.languageOption).
-        The output text must be in Markdown format.
-        """
+      content: useCase.prompt.systemPrompt.applyArgs(
+        ("TONE", templateOptions.toneOption),
+        ("LANG", templateOptions.languageOption)
+      )
     ))
     gptHistory.append(.init(
       role: "user", 
@@ -88,7 +84,7 @@ extension DocumentView.ViewModel {
       </keywords>
       """
     ))
-    chat = Self.chatToAttributedString(gptHistory)
+    chat = chatToAttributedString(gptHistory)
     document.chatHistory = gptHistory
     updateDocument(force: true)
     
@@ -113,14 +109,17 @@ extension DocumentView.ViewModel {
         
         print("OpenAI did respond:")
         print(responses[0])
-        
-//        self.text = parseMarkdown(responses[0])
+      
         self.text.insert(parseMarkdown(responses[0]), at: self.text.startIndex)
         self.document.chatHistory = gptHistory
         self.updateDocument()
       } catch {
         print("Calling OpenAI failed")
-        isSpinning = false
+        self.isSpinning = false
+        var container = AttributeContainer()
+        container.font = .systemFont(ofSize: 14)
+        container.foregroundColor = .red
+        self.chat.append(AttributedString(error.localizedDescription).settingAttributes(container))
       }
     }
   }
@@ -167,7 +166,7 @@ extension DocumentView.ViewModel {
     } else {
       history = gptHistory
     }
-    chat = Self.chatToAttributedString(gptHistory)
+    chat = chatToAttributedString(gptHistory)
     document.chatHistory = gptHistory
     updateDocument(force: true)
     do {
@@ -187,7 +186,7 @@ extension DocumentView.ViewModel {
         role: "assistant", 
         content: responses[0]
       ))
-      self.chat = Self.chatToAttributedString(self.gptHistory)
+      self.chat = chatToAttributedString(self.gptHistory)
       
       print("OpenAI did respond:")
       print(responses[0])
@@ -209,65 +208,14 @@ extension DocumentView.ViewModel {
       self.updateDocument()
     } catch {
       print("Calling OpenAI failed")
-      isSpinning = false
+      self.isSpinning = false
+      var container = AttributeContainer()
+      container.font = .systemFont(ofSize: 14)
+      container.foregroundColor = .red
+      self.chat.append(AttributedString(error.localizedDescription).settingAttributes(container))
     }
   }
-  
-  private static func chatToAttributedString(
-    _ chat: [OpenAIAPI.Message]
-  ) -> AttributedString {
-    var string = AttributedString()
-    for message in chat {
-      switch message.role {
-      case "system":
-        var container = AttributeContainer()
-        container.foregroundColor = .red
-        container.font = .boldSystemFont(ofSize: 14)
-        var substr = AttributedString("⦿  System\n")
-        substr.setAttributes(container)
-        string.append(substr)
-        
-        container = AttributeContainer()
-        container.foregroundColor = .white
-        container.font = .systemFont(ofSize: 14)
-        substr = AttributedString(message.content + "\n" + "\n")
-        substr.setAttributes(container)
-        string.append(substr)
-      case "assistant":
-        var container = AttributeContainer()
-        container.foregroundColor = .orange
-        container.font = .boldSystemFont(ofSize: 14)
-        var substr = AttributedString("⦿  Assistant\n")
-        substr.setAttributes(container)
-        string.append(substr)
-        
-        container = AttributeContainer()
-        container.foregroundColor = .white
-        container.font = .systemFont(ofSize: 14)
-        substr = AttributedString(message.content + "\n" + "\n")
-        substr.setAttributes(container)
-        string.append(substr)
-      case "user":
-        var container = AttributeContainer()
-        container.foregroundColor = .magenta
-        container.font = .boldSystemFont(ofSize: 14)
-        var substr = AttributedString("⦿  User\n")
-        substr.setAttributes(container)
-        string.append(substr)
-        
-        container = AttributeContainer()
-        container.foregroundColor = .white
-        container.font = .systemFont(ofSize: 14)
-        substr = AttributedString(message.content + "\n" + "\n")
-        substr.setAttributes(container)
-        string.append(substr)
-      case _:
-        fatalError()
-      }
-    }
-    return string
-  }
-} 
+}
 
 extension Color {
 #if os(iOS)
@@ -279,4 +227,38 @@ extension Color {
     self.init(nsColor: color)
   }
 #endif
+  
+  static func rgb(red: Int, green: Int, blue: Int, opacity: Double = 1) -> Color {
+    .init(
+      .sRGB,
+      red: Double(red) / 255.0, 
+      green: Double(green) / 255.0, 
+      blue: Double(blue) / 255.0,
+      opacity: opacity
+    )
+  }
+  
+  static func hex(_ hex: Int, opacity: Double = 1) -> Color {
+    rgb(
+      red: (hex & 0xFF0000) >> 16,
+      green: (hex & 0x00FF00) >> 8,
+      blue: hex & 0x0000FF,
+      opacity: opacity
+    )
+  }
+  
+  enum palette {
+    static var background = Color.hex(0x1C1C1C)
+    static var background1 = Color.hex(0x2A2A2A)
+    static var background2 = Color.hex(0x3A3A3A)
+    static var primaryText = Color.hex(0xE0E0E0)
+    static var secondaryText = Color.hex(0xB0B0B0)
+    static var accentColor = Color.hex(0x3B8BFF)
+    static var accentColor2 = Color.hex(0x42D77D)
+    static var accentColor3 = Color.hex(0xFF647C)
+    static var accentColor4 = Color.hex(0xFFC833)
+    static var accentColor5 = Color.hex(0x31C1A8)
+    static var selectionBackgroundColor = Color.hex(0x4A90E2)
+    static var selectionTextColor = Color.hex(0xFFFFFF)
+  }
 }
