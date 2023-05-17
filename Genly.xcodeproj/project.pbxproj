@@ -21,10 +21,11 @@
 		EA8BEF3E2A0165DF005F1A74 /* SideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */; };
 		EAC237B72A08FD6600748EC4 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC237B62A08FD6600748EC4 /* Font.swift */; };
 		EAC3BCB32A01710E00D0B5BF /* DocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */; };
-		EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */; };
 		EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */; };
 		EAC3BCC22A02D09100D0B5BF /* DocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */; };
 		EAC3BCC42A03B7B600D0B5BF /* CommandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */; };
+		EAF3BB152A1500D000DFDB96 /* Swiftchain in Frameworks */ = {isa = PBXBuildFile; productRef = EAF3BB142A1500D000DFDB96 /* Swiftchain */; };
+		EAF3BB172A1500D000DFDB96 /* SwiftchainOpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = EAF3BB162A1500D000DFDB96 /* SwiftchainOpenAI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,10 +45,11 @@
 		EA8BEF3D2A0165DF005F1A74 /* SideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideBarView.swift; sourceTree = "<group>"; };
 		EAC237B62A08FD6600748EC4 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		EAC3BCB22A01710E00D0B5BF /* DocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentView.swift; sourceTree = "<group>"; };
-		EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIAPI.swift; sourceTree = "<group>"; };
 		EAC3BCBD2A02880300D0B5BF /* TextControlsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextControlsPane.swift; sourceTree = "<group>"; };
 		EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStorage.swift; sourceTree = "<group>"; };
 		EAC3BCC32A03B7B600D0B5BF /* CommandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandsView.swift; sourceTree = "<group>"; };
+		EAF3BB102A15000E00DFDB96 /* swiftchain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swiftchain; path = ../swiftchain; sourceTree = "<group>"; };
+		EAF3BB132A1500B200DFDB96 /* swiftchain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swiftchain; path = ../swiftchain; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAF3BB172A1500D000DFDB96 /* SwiftchainOpenAI in Frameworks */,
+				EAF3BB152A1500D000DFDB96 /* Swiftchain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +82,7 @@
 		EA8BEF142A0151FE005F1A74 = {
 			isa = PBXGroup;
 			children = (
+				EAF3BB122A1500B200DFDB96 /* Packages */,
 				EA8BEF1F2A0151FE005F1A74 /* Genly */,
 				EA8BEF1E2A0151FE005F1A74 /* Products */,
 				EA8BEF312A015277005F1A74 /* Frameworks */,
@@ -114,6 +119,7 @@
 		EA8BEF312A015277005F1A74 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EAF3BB102A15000E00DFDB96 /* swiftchain */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -145,10 +151,17 @@
 				EA8BEF382A015B52005F1A74 /* AppConfigStorage.swift */,
 				EAC3BCC12A02D09100D0B5BF /* DocumentStorage.swift */,
 				EA0B6FFA2A078A3E00C8C968 /* PromptsStorage.swift */,
-				EAC3BCB42A01846300D0B5BF /* OpenAIAPI.swift */,
 				EAC237B62A08FD6600748EC4 /* Font.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		EAF3BB122A1500B200DFDB96 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				EAF3BB132A1500B200DFDB96 /* swiftchain */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +181,8 @@
 			);
 			name = Genly;
 			packageProductDependencies = (
+				EAF3BB142A1500D000DFDB96 /* Swiftchain */,
+				EAF3BB162A1500D000DFDB96 /* SwiftchainOpenAI */,
 			);
 			productName = Genly;
 			productReference = EA8BEF1D2A0151FE005F1A74 /* Genly.app */;
@@ -225,7 +240,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EAC3BCB52A01846300D0B5BF /* OpenAIAPI.swift in Sources */,
 				EAC3BCBE2A02880300D0B5BF /* TextControlsPane.swift in Sources */,
 				EA8BEF232A0151FE005F1A74 /* MainView.swift in Sources */,
 				EA0B6FF72A0686D100C8C968 /* Utils.swift in Sources */,
@@ -448,6 +462,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EAF3BB142A1500D000DFDB96 /* Swiftchain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Swiftchain;
+		};
+		EAF3BB162A1500D000DFDB96 /* SwiftchainOpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftchainOpenAI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EA8BEF152A0151FE005F1A74 /* Project object */;
 }

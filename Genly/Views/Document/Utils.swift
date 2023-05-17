@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftchainOpenAI
 
 func parseMarkdown(
   _ markdown: String,
@@ -174,12 +175,12 @@ extension UIFontDescriptor.SymbolicTraits {
 
 
 func chatToAttributedString(
-  _ chat: [OpenAIAPI.Message]
+  _ chat: [ChatOpenAILLM.Message]
 ) -> AttributedString {
   var string = AttributedString()
   for message in chat {
     switch message.role {
-    case "system":
+    case .system:
       var container = AttributeContainer()
       container.foregroundColor = .red
       container.font = .boldSystemFont(ofSize: 14)
@@ -193,7 +194,7 @@ func chatToAttributedString(
       substr = AttributedString(message.content + "\n" + "\n")
       substr.setAttributes(container)
       string.append(substr)
-    case "assistant":
+    case .assistant:
       var container = AttributeContainer()
       container.foregroundColor = .orange
       container.font = .boldSystemFont(ofSize: 14)
@@ -207,7 +208,7 @@ func chatToAttributedString(
       substr = AttributedString(message.content + "\n" + "\n")
       substr.setAttributes(container)
       string.append(substr)
-    case "user":
+    case .user:
       var container = AttributeContainer()
       container.foregroundColor = .magenta
       container.font = .boldSystemFont(ofSize: 14)
@@ -221,7 +222,7 @@ func chatToAttributedString(
       substr = AttributedString(message.content + "\n" + "\n")
       substr.setAttributes(container)
       string.append(substr)
-    case "error":
+    case .custom("error"):
       var container = AttributeContainer()
       container.foregroundColor = .orange
       container.font = .boldSystemFont(ofSize: 14)

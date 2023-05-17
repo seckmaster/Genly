@@ -88,7 +88,7 @@ struct MainView: View {
             source: .existing(document.document), 
             apiKey: viewModel.apiKey ?? "", 
             useCase: viewModel.useCases.useCases.first { $0.prompt.name == document.document.templateOptions.useCaseOption }!
-          ), 
+          ),
           apiKey: viewModel.apiKey ?? "",
           sideBarViewModel: sideBarViewModel,
           router: router

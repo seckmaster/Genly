@@ -6,17 +6,17 @@
 //
 
 import SwiftUI
+import SwiftchainOpenAI
 
 extension DocumentView {
   class ViewModel: ObservableObject {
     let source: DocumentView.DocumentSource
     var document: Document
-    let api: OpenAIAPI = .init()
-    let apiKey: String
+    let llm: ChatOpenAILLM
     let storage: DocumentStorage = try! .init()
     let promptsStorage: PromptsStorage = .init()
     
-    private var gptHistory: [OpenAIAPI.Message] = []
+    private var gptHistory: [ChatOpenAILLM.Message] = []
     
     let useCase: UseCases.UseCase
     @Published var isBoldHighlighted: Bool = false
@@ -37,8 +37,8 @@ extension DocumentView {
       useCase: UseCases.UseCase
     ) {
       self.source = source
-      self.apiKey = apiKey
       self.useCase = useCase
+      self.llm = .init(apiKey: apiKey)
       switch source {
       case .existing(let document):
         self.text = document.text
@@ -70,14 +70,14 @@ extension DocumentView.ViewModel {
     guard case let .new(templateOptions) = source else { return }
     
     gptHistory.append(.init(
-      role: "system", 
+      role: .system, 
       content: useCase.prompt.systemPrompt.applyArgs(
         ("TONE", templateOptions.toneOption),
         ("LANG", templateOptions.languageOption)
       )
     ))
     gptHistory.append(.init(
-      role: "user", 
+      role: .user, 
       content: """
       <keywords>
       \(templateOptions.keyword)
@@ -91,19 +91,20 @@ extension DocumentView.ViewModel {
     Task { @MainActor in
       do {
         isSpinning = true
-        let responses = try await api.completion(
-          temperature: 0.3,
-          variants: templateOptions.variantsCount, 
-          messages: gptHistory, 
-          apiKey: apiKey
+        let responses = try await llm.invoke(
+          messages: gptHistory,
+          temperature: 0.0,
+          numberOfVariants: 1,
+          model: "gpt-4"
         )
+        
         isSpinning = false
         guard !responses.isEmpty else { 
           return
         }
         
         self.gptHistory.append(.init(
-          role: "assistant", 
+          role: .assistant, 
           content: responses[0]
         ))
         
@@ -152,15 +153,15 @@ extension DocumentView.ViewModel {
   ) async {
     if createNewHistory {
       gptHistory.append(.init(
-        role: "system", 
+        role: .system, 
         content: systemPrompt.trimmingCharacters(in: .whitespaces)
       ))
     }
     gptHistory.append(.init(
-      role: "user", 
+      role: .user, 
       content: userPrompt.trimmingCharacters(in: .whitespaces)
     ))
-    let history: [OpenAIAPI.Message]
+    let history: [ChatOpenAILLM.Message]
     if createNewHistory {
       history = gptHistory.suffix(2)
     } else {
@@ -171,11 +172,11 @@ extension DocumentView.ViewModel {
     updateDocument(force: true)
     do {
       isSpinning = true
-      let responses = try await api.completion(
-        temperature: 0.3,
-        variants: 1, 
+      let responses = try await llm.invoke(
         messages: history, 
-        apiKey: apiKey
+        temperature: 0.0, 
+        numberOfVariants: 1, 
+        model: "gpt-4"
       )
       isSpinning = false
       guard !responses.isEmpty else { 
@@ -183,7 +184,7 @@ extension DocumentView.ViewModel {
       }
       
       self.gptHistory.append(.init(
-        role: "assistant", 
+        role: .assistant, 
         content: responses[0]
       ))
       self.chat = chatToAttributedString(self.gptHistory)

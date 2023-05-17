@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import SwiftchainOpenAI
 
 struct Document: Identifiable, Codable, Hashable {
   var id: UUID
   var title: String?
   var text: AttributedString
-  var chatHistory: [OpenAIAPI.Message]
+  var chatHistory: [ChatOpenAILLM.Message]
   var createdAt: Date
   var lastModifiedAt: Date
   var templateOptions: SideBarView.TemplateOptions

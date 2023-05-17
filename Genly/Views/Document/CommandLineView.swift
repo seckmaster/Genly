@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftchainOpenAI
 
 struct CommandLineView: View {
   @ObservedObject var viewModel: ViewModel
@@ -65,33 +66,35 @@ struct CommandLineView: View {
   
   class ViewModel: ObservableObject {
     @Published var historyText: AttributedString
-    private let apiKey: String
-    private let api = OpenAIAPI()
-    private var history: [OpenAIAPI.Message] = [
-      .init(role: "system", content: "You are a helpful assistant. Respond to user's queries in an informative, professional and honest manner.")
+    private let llm: ChatOpenAILLM
+    private var history: [ChatOpenAILLM.Message] = [
+      .init(
+        role: .system, 
+        content: "You are a helpful assistant. Respond to user's queries in an informative, professional and honest manner."
+      )
     ]
     
     init(apiKey: String) {
-      self.apiKey = apiKey
+      self.llm = .init(apiKey: apiKey)
       self.historyText = chatToAttributedString(history)
     }
     
     @MainActor
     func callGPT(text: String) async {
-      history.append(.init(role: "user", content: text))
+      history.append(.init(role: .user, content: text))
       historyText = chatToAttributedString(history)
       do {
-        let response = try await api.completion(
-          temperature: 0.2, 
-          variants: 1, 
-          messages: history.filter { $0.role != "error" }, 
-          apiKey: apiKey
+        let response = try await llm.invoke(
+          messages: history.filter { $0.role.rawValue != "error" }, 
+          temperature: 0.0, 
+          numberOfVariants: 1, 
+          model: "gpt-4"
         )
         guard !response.isEmpty else { return }
-        history.append(.init(role: "assistant", content: response[0]))
+        history.append(.init(role: .assistant, content: response[0]))
         historyText = chatToAttributedString(history)
       } catch {
-        history.append(.init(role: "error", content: String(describing: error)))
+        history.append(.init(role: .custom("error"), content: String(describing: error)))
         historyText = chatToAttributedString(history)
       }
     }
