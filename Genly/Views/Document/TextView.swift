@@ -16,7 +16,6 @@ typealias OldSchoolTextViewDelegate = UITextViewDelegate
 typealias OldSchoolColor = UIColor
 #elseif os(macOS)
 import AppKit
-import RichTextKit
 
 typealias ViewRepresentable = NSViewRepresentable
 typealias OldSchoolScrollView = NSScrollView
@@ -47,7 +46,10 @@ struct TextView: ViewRepresentable {
     let scroll = scrollView.documentVisibleRect.origin
     
     let attributedString = NSMutableAttributedString(text)
-    attributedString.setAttributes([.foregroundColor: NSColor.white], range: .init(location: 0, length: attributedString.length))
+    attributedString.setRichTextAttributes(
+      [.foregroundColor: NSColor.white], 
+      at: .init(location: 0, length: attributedString.length)
+    )
     let ranges = textView.selectedRanges
     
     textView.delegate = nil
@@ -171,9 +173,37 @@ class TextViewDelegate: NSObject, OldSchoolTextViewDelegate {
   }
 #endif
 }
-//extension String {
-//  func character(at index: Int) -> String.Element? {
-//    guard index >= 0 && index < utf16.count else { return nil }
-//    return self[self.index(startIndex, offsetBy: index)]
-//  }
-//}
+
+extension String {
+  func character(at index: Int) -> String.Element? {
+    guard index >= 0 && index < utf16.count else { return nil }
+    return self[self.index(startIndex, offsetBy: index)]
+  }
+}
+
+extension NSMutableAttributedString {
+  func setRichTextAttributes(
+    _ attributes: [NSAttributedString.Key: Any],
+    at range: NSRange
+  ) {
+    let range = safeRange(for: range)
+    let string = self
+    string.beginEditing()
+    attributes.forEach { attribute, newValue in
+      string.enumerateAttribute(attribute, in: range, options: .init()) { _, range, _ in
+        string.removeAttribute(attribute, range: range)
+        string.addAttribute(attribute, value: newValue, range: range)
+        string.fixAttributes(in: range)
+      }
+    }
+    string.endEditing()
+  }
+  
+  func safeRange(for range: NSRange) -> NSRange {
+    let length = self.length
+    return NSRange(
+      location: max(0, min(length-1, range.location)),
+      length: min(range.length, max(0, length - range.location))
+    )
+  }
+}

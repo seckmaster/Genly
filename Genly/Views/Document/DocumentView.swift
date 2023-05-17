@@ -5,9 +5,7 @@
 //  Created by Toni K. Turk on 02/05/2023.
 //
 
-//import AppKit
 import SwiftUI
-import RichTextKit
 
 struct DocumentView: View {
   enum DocumentSource {
