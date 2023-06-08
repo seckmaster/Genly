@@ -17,7 +17,7 @@ struct DocumentView: View {
   let router: MainView.Router
   @ObservedObject var viewModel: ViewModel
   @ObservedObject var sideBarViewModel: SideBarView.ViewModel
-  @ObservedObject var commandLineViewModel: CommandLineView.ViewModel
+  @ObservedObject var commandLineViewModel: GPTConsole.ViewModel
   
   init(
     documentViewModel: ViewModel,
@@ -225,7 +225,7 @@ struct DocumentView: View {
         .padding()
         .background(Color.palette.background)
         .cornerRadius(12)
-        CommandLineView(viewModel: commandLineViewModel)
+        GPTConsole(viewModel: commandLineViewModel)
           .frame(height: metrics.size.height * 0.33)
       }
       .cornerRadius(12)

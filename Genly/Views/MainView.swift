@@ -26,7 +26,7 @@ struct MainView: View {
             }
             .padding(40)
             if let apiKey = viewModel.apiKey {
-              CommandLineView(viewModel: .init(apiKey: apiKey))
+              GPTConsole(viewModel: .init(apiKey: apiKey))
             }
           }
           GeometryReader { reader in 
@@ -133,12 +133,6 @@ struct MainView: View {
     } catch {
       print(error)
     }
-  }
-}
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    MainView(router: .init(), viewModel: .init())
   }
 }
 

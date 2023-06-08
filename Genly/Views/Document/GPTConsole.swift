@@ -1,5 +1,5 @@
 //
-//  CommandLineView.swift
+//  GPTConsole.swift
 //  Genly
 //
 //  Created by Toni K. Turk on 10/05/2023.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftchainOpenAI
 
-struct CommandLineView: View {
+struct GPTConsole: View {
   @ObservedObject var viewModel: ViewModel
   @State var editingText: String = ""
   @State var isLoading: Bool = false
@@ -20,14 +20,11 @@ struct CommandLineView: View {
   var body: some View {
     GeometryReader { metrics in
       VStack(alignment: .leading) {
-        ScrollView(.vertical) {
-          Text(viewModel.historyText)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(height: metrics.size.height * 0.70)
-        .frame(maxWidth: .infinity)
-        .background(Color.palette.background1)
-        .cornerRadius(12)
+        TextView(text: $viewModel.historyText)
+          .frame(height: metrics.size.height * 0.70)
+          .frame(maxWidth: .infinity)
+          .background(Color.palette.background1)
+          .cornerRadius(12)
         ZStack {
           GeometryReader { zstackMetrics in
             HStack {
@@ -36,6 +33,15 @@ struct CommandLineView: View {
                 .scrollContentBackground(.hidden)
             }
             .padding()
+            Button {
+              viewModel.reset()
+            } label: {
+              Image(systemName: "trash.slash.fill")
+                .frame(width: 40, height: 40)
+            }
+            .frame(minWidth: 80, minHeight: 80)
+            .buttonStyle(.plain)
+            .position(.init(x: zstackMetrics.size.width - 20, y: 20))
             LoadingButton(isLoading: $isLoading) { 
               Task {
                 guard !editingText.isEmpty else { return }
@@ -47,7 +53,7 @@ struct CommandLineView: View {
               }
             } label: { 
               Image(systemName: "paperplane.fill")
-                .background(Color.black)
+                .frame(width: 40, height: 40)
             }
             .frame(minWidth: 80, minHeight: 80)
             .buttonStyle(.plain)
@@ -85,18 +91,23 @@ struct CommandLineView: View {
       historyText = chatToAttributedString(history)
       do {
         let response = try await llm.invoke(
-          messages: history.filter { $0.role.rawValue != "error" }, 
+          history.filter { $0.role.rawValue != "error" }, 
           temperature: 0.0, 
           numberOfVariants: 1, 
           model: "gpt-4"
         )
-        guard !response.isEmpty else { return }
-        history.append(.init(role: .assistant, content: response[0]))
+        guard !response.messages.isEmpty else { return }
+        history.append(.init(role: .assistant, content: response.messages[0].content))
         historyText = chatToAttributedString(history)
       } catch {
         history.append(.init(role: .custom("error"), content: String(describing: error)))
         historyText = chatToAttributedString(history)
       }
+    }
+    
+    func reset() {
+      history.removeLast(history.count - 1)
+      historyText = chatToAttributedString(history)
     }
   }
 }

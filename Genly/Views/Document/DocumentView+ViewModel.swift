@@ -92,26 +92,26 @@ extension DocumentView.ViewModel {
       do {
         isSpinning = true
         let responses = try await llm.invoke(
-          messages: gptHistory,
+          gptHistory,
           temperature: 0.0,
           numberOfVariants: 1,
           model: "gpt-4"
         )
         
         isSpinning = false
-        guard !responses.isEmpty else { 
+        guard !responses.messages.isEmpty else { 
           return
         }
         
         self.gptHistory.append(.init(
           role: .assistant, 
-          content: responses[0]
+          content: responses.messages[0].content
         ))
         
         print("OpenAI did respond:")
-        print(responses[0])
+        print(responses.messages[0].content)
       
-        self.text.insert(parseMarkdown(responses[0]), at: self.text.startIndex)
+        self.text.insert(parseMarkdown(responses.messages[0].content), at: self.text.startIndex)
         self.document.chatHistory = gptHistory
         self.updateDocument()
       } catch {
@@ -172,28 +172,28 @@ extension DocumentView.ViewModel {
     updateDocument(force: true)
     do {
       isSpinning = true
-      let responses = try await llm.invoke(
-        messages: history, 
+      let response = try await llm.invoke(
+        history, 
         temperature: 0.0, 
         numberOfVariants: 1, 
         model: "gpt-4"
       )
       isSpinning = false
-      guard !responses.isEmpty else { 
+      guard !response.messages.isEmpty else { 
         return
       }
       
       self.gptHistory.append(.init(
         role: .assistant, 
-        content: responses[0]
+        content: response.messages[0].content
       ))
       self.chat = chatToAttributedString(self.gptHistory)
       
       print("OpenAI did respond:")
-      print(responses[0])
+      print(response.messages[0].content)
       
       var attributedResponse = parseMarkdown(
-        responses[0], 
+        response.messages[0].content, 
         primaryForegroundColor: primaryForegroundColor
       )
       attributedResponse.insert(AttributedString("\n\n"), at: attributedResponse.startIndex)

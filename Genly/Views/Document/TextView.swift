@@ -40,7 +40,6 @@ struct TextView: ViewRepresentable {
   
   func updateNSView(_ scrollView: OldSchoolScrollView, context: Context) {
     guard delegate?.text != text else { return }
-    print("func updateNSView(_ textView: NSScrollView, context: Context) {")
     
     let textView = scrollView.documentView as! OldSchoolTextView
     let scroll = scrollView.documentVisibleRect.origin
